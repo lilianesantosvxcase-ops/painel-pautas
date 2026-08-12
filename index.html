@@ -190,6 +190,7 @@
     <div style="font-size:44px">⏳</div>
     <h1>Conta aguardando liberação</h1>
     <p>Sua conta foi criada! Agora a administradora (Liliane) precisa liberar seu acesso. Assim que ela aprovar, é só recarregar a página.</p>
+    <p class="hint" id="pDebug" style="margin-top:14px;max-width:420px"></p>
     <button class="btn" id="p_logout">Sair</button>
   </div>
 </div>
@@ -325,7 +326,7 @@
 const SUPABASE_URL  = "https://qnguobieujbhjupcvmnq.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZ3VvYmlldWpiaGp1cGN2bW5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NDM0NzUsImV4cCI6MjEwMjExOTQ3NX0.1avLQ7m8TZczdLSb9hMj6P7Sn1QsLWXf0u6jbvVL0AA";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-  auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
+  auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
 });
 
 /* ====== CONSTANTES ====== */
@@ -334,7 +335,7 @@ const FRENTES={manutencao:{nome:"Manutenção",emoji:"🔧"},acessorios:{nome:"A
 const STEPS=["solicitado","comprado","planilha","nf","conferencia","garantia"];
 
 /* ====== ESTADO ====== */
-let me=null, pautas=[], fornecedores=[], usuarios=[];
+let me=null, pautas=[], fornecedores=[], usuarios=[], lastErr="";
 let filtroFrente="todas", filtroBusca="", filtroUrgente=false, editId=null, signupMode=false;
 const isAdmin=()=> me && me.papel==="admin";
 
@@ -357,8 +358,8 @@ async function init(){
 async function handleSession(session){
   if(!session){ hide($("appView"));hide($("pendingView"));show($("authView")); return; }
   me = await loadProfile(session.user.id);
-  if(!me){ hide($("appView"));show($("pendingView"));hide($("authView")); return; }
-  if(!me.aprovado){ hide($("appView"));show($("pendingView"));hide($("authView")); return; }
+  if(!me){ $("pDebug").textContent = lastErr ? ("Detalhe técnico: "+lastErr) : "Detalhe técnico: perfil não retornado pelo banco (sem erro reportado)."; hide($("appView"));show($("pendingView"));hide($("authView")); return; }
+  if(!me.aprovado){ $("pDebug").textContent = "Perfil encontrado (papel: "+me.papel+"), mas marcado como NÃO liberado."; hide($("appView"));show($("pendingView"));hide($("authView")); return; }
   hide($("authView"));hide($("pendingView"));show($("appView"));
   paintUser();
   applyRoleUI();
@@ -370,7 +371,7 @@ async function loadProfile(id){
   for(let i=0;i<6;i++){
     const {data,error} = await sb.from("profiles").select("*").eq("id",id).maybeSingle();
     if(data) return data;
-    if(error) console.warn("perfil:", error.message);
+    if(error){ lastErr=error.message; console.warn("perfil:", error.message); }
     await new Promise(r=>setTimeout(r,400));
   }
   return null;
