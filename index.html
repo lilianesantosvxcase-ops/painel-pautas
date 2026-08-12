@@ -1,4 +1,4 @@
-<meta charset="utf-8">
+ <meta charset="utf-8">
 <title>Painel de Pautas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -6,9 +6,7 @@
     --bg:#f4f6fb; --panel:#ffffff; --ink:#1f2733; --muted:#6b7688;
     --line:#e4e8f0; --line2:#eef1f7; --shadow:0 1px 3px rgba(20,30,50,.08),0 1px 2px rgba(20,30,50,.04);
     --brand:#2f6df6; --brand-ink:#1b52d6;
-    --urgent:#e5484d; --urgent-bg:#fdecec;
-    --done:#12a150;
-    /* frentes */
+    --urgent:#e5484d; --urgent-bg:#fdecec; --done:#12a150;
     --f-manut:#2f6df6; --f-manut-bg:#e8f0ff;
     --f-acess:#12a150; --f-acess-bg:#e6f6ec;
     --f-super:#8b5cf6; --f-super-bg:#f0eafe;
@@ -19,235 +17,224 @@
     :root{
       --bg:#0f141c; --panel:#171e29; --ink:#e8edf5; --muted:#95a1b3;
       --line:#25303f; --line2:#1e2733; --shadow:0 1px 3px rgba(0,0,0,.4);
-      --f-manut-bg:#16233d; --f-acess-bg:#12291d; --f-super-bg:#241b3a; --f-dia-bg:#2e2413;
-      --urgent-bg:#3a1c1e;
+      --f-manut-bg:#16233d; --f-acess-bg:#12291d; --f-super-bg:#241b3a; --f-dia-bg:#2e2413; --urgent-bg:#3a1c1e;
     }
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%}
-  body{
-    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
-    background:var(--bg); color:var(--ink);
-    display:flex; flex-direction:column; height:100vh; overflow:hidden;
-  }
-  button{font-family:inherit; cursor:pointer}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden}
+  button{font-family:inherit;cursor:pointer}
   input,select,textarea{font-family:inherit}
+  .hidden{display:none !important}
+
+  /* ---------- AUTH ---------- */
+  .auth-wrap{height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .auth-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.15);width:100%;max-width:400px;padding:28px}
+  .auth-card .logo{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),#7aa2ff);color:#fff;font-size:26px;margin:0 auto 14px}
+  .auth-card h1{font-size:20px;text-align:center;margin:0 0 4px}
+  .auth-card .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:22px}
+  .auth-card label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin:12px 0 5px}
+  .auth-card input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font-size:14px}
+  .auth-card input:focus{outline:2px solid var(--brand);border-color:transparent}
+  .auth-btn{width:100%;margin-top:18px;padding:12px;border:none;border-radius:9px;background:var(--brand);color:#fff;font-size:15px;font-weight:700}
+  .auth-btn:hover{background:var(--brand-ink)}
+  .auth-toggle{text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+  .auth-toggle a{color:var(--brand);font-weight:700;cursor:pointer;text-decoration:none}
+  .auth-msg{margin-top:14px;padding:10px 12px;border-radius:8px;font-size:13px;display:none}
+  .auth-msg.err{background:var(--urgent-bg);color:var(--urgent);display:block}
+  .auth-msg.ok{background:var(--f-acess-bg);color:var(--f-acess);display:block}
+  .center-note{max-width:420px;text-align:center;color:var(--muted)}
+  .center-note h1{color:var(--ink);font-size:20px}
 
   /* ---------- HEADER ---------- */
-  header{
-    background:var(--panel); border-bottom:1px solid var(--line);
-    padding:12px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-    box-shadow:var(--shadow); z-index:5;
-  }
-  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; white-space:nowrap}
-  .brand .logo{
-    width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
-    background:linear-gradient(135deg,var(--brand),#7aa2ff); color:#fff; font-size:18px;
-  }
-  .brand small{display:block; font-weight:500; font-size:11px; color:var(--muted)}
-
-  .quickbar{display:flex; align-items:center; gap:8px; flex:1; min-width:260px}
-  .quickbar input{
-    flex:1; min-width:160px; padding:10px 12px; border:1px solid var(--line);
-    border-radius:9px; background:var(--bg); color:var(--ink); font-size:14px;
-  }
-  .quickbar input:focus{outline:2px solid var(--brand); border-color:transparent}
-
-  .btn{
-    border:1px solid var(--line); background:var(--panel); color:var(--ink);
-    padding:9px 14px; border-radius:9px; font-size:14px; font-weight:600;
-    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
-  }
+  #appView{display:flex;flex-direction:column;height:100vh}
+  header{background:var(--panel);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);z-index:5}
+  .hrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%}
+  .hright{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;white-space:nowrap}
+  .brand .logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),#7aa2ff);color:#fff;font-size:18px}
+  .brand small{display:block;font-weight:500;font-size:11px;color:var(--muted)}
+  .quickbar{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+  .quickbar input{flex:1;min-width:140px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font-size:14px}
+  .quickbar input:focus{outline:2px solid var(--brand);border-color:transparent}
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:9px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
   .btn:hover{border-color:var(--brand)}
-  .btn.primary{background:var(--brand); color:#fff; border-color:var(--brand)}
+  .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
   .btn.primary:hover{background:var(--brand-ink)}
   .btn.ghost{background:transparent}
-  .btn.sm{padding:6px 10px; font-size:13px}
+  .btn.sm{padding:6px 10px;font-size:13px}
+  .userchip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--f-super);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+  .role-badge{font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;background:var(--f-super-bg);color:var(--f-super);text-transform:uppercase}
 
   /* ---------- TOOLBAR ---------- */
-  .toolbar{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    padding:10px 18px; background:var(--panel); border-bottom:1px solid var(--line);
-  }
-  .chips{display:flex; gap:6px; flex-wrap:wrap}
-  .chip{
-    border:1px solid var(--line); background:var(--panel); color:var(--muted);
-    padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600;
-    display:inline-flex; align-items:center; gap:6px;
-  }
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
   .chip .dot{width:9px;height:9px;border-radius:50%}
-  .chip.active{color:var(--ink); border-color:currentColor}
-  .chip[data-f="todas"].active{border-color:var(--brand); color:var(--brand)}
-  .chip[data-f="manutencao"].active{background:var(--f-manut-bg); border-color:var(--f-manut); color:var(--f-manut)}
-  .chip[data-f="acessorios"].active{background:var(--f-acess-bg); border-color:var(--f-acess); color:var(--f-acess)}
-  .chip[data-f="supervisao"].active{background:var(--f-super-bg); border-color:var(--f-super); color:var(--f-super)}
-  .chip[data-f="demanda"].active{background:var(--f-dia-bg); border-color:var(--f-dia); color:var(--f-dia)}
-
-  .search{margin-left:auto; position:relative}
-  .search input{
-    padding:8px 12px 8px 32px; border:1px solid var(--line); border-radius:9px;
-    background:var(--bg); color:var(--ink); font-size:13px; width:200px;
-  }
-  .search::before{content:"🔍"; position:absolute; left:10px; top:7px; font-size:13px; opacity:.6}
+  .chip.active{color:var(--ink);border-color:currentColor}
+  .chip[data-f="todas"].active{border-color:var(--brand);color:var(--brand)}
+  .chip[data-f="manutencao"].active{background:var(--f-manut-bg);border-color:var(--f-manut);color:var(--f-manut)}
+  .chip[data-f="acessorios"].active{background:var(--f-acess-bg);border-color:var(--f-acess);color:var(--f-acess)}
+  .chip[data-f="supervisao"].active{background:var(--f-super-bg);border-color:var(--f-super);color:var(--f-super)}
+  .chip[data-f="demanda"].active{background:var(--f-dia-bg);border-color:var(--f-dia);color:var(--f-dia)}
+  .search{margin-left:auto;position:relative}
+  .search input{padding:8px 12px 8px 32px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font-size:13px;width:190px}
+  .search::before{content:"🔍";position:absolute;left:10px;top:7px;font-size:13px;opacity:.6}
 
   /* ---------- BOARD ---------- */
-  .board{
-    flex:1; display:flex; gap:14px; padding:16px 18px; overflow-x:auto; overflow-y:hidden;
-  }
-  .col{
-    background:var(--line2); border-radius:var(--radius); width:280px; min-width:280px;
-    display:flex; flex-direction:column; max-height:100%;
-  }
-  .col-head{
-    display:flex; align-items:center; gap:8px; padding:12px 14px 8px; font-weight:700; font-size:14px;
-  }
-  .col-head .count{
-    margin-left:auto; background:var(--panel); color:var(--muted); font-size:12px;
-    padding:2px 9px; border-radius:20px; font-weight:700;
-  }
-  .col-body{padding:4px 10px 12px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:9px}
-  .col-body.drop{background:rgba(47,109,246,.08); outline:2px dashed var(--brand); outline-offset:-4px; border-radius:8px}
-  .col-empty{color:var(--muted); font-size:12px; text-align:center; padding:16px 8px; border:1px dashed var(--line); border-radius:8px}
-
-  /* ---------- CARD ---------- */
-  .card{
-    background:var(--panel); border:1px solid var(--line); border-left-width:4px;
-    border-radius:10px; padding:11px 12px; box-shadow:var(--shadow); cursor:grab;
-    display:flex; flex-direction:column; gap:8px;
-  }
-  .card:active{cursor:grabbing}
+  .board{flex:1;display:flex;gap:14px;padding:16px 18px;overflow-x:auto;overflow-y:hidden}
+  .col{background:var(--line2);border-radius:var(--radius);width:280px;min-width:280px;display:flex;flex-direction:column;max-height:100%}
+  .col-head{display:flex;align-items:center;gap:8px;padding:12px 14px 8px;font-weight:700;font-size:14px}
+  .col-head .count{margin-left:auto;background:var(--panel);color:var(--muted);font-size:12px;padding:2px 9px;border-radius:20px;font-weight:700}
+  .col-body{padding:4px 10px 12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:9px}
+  .col-body.drop{background:rgba(47,109,246,.08);outline:2px dashed var(--brand);outline-offset:-4px;border-radius:8px}
+  .col-empty{color:var(--muted);font-size:12px;text-align:center;padding:16px 8px;border:1px dashed var(--line);border-radius:8px}
+  .card{background:var(--panel);border:1px solid var(--line);border-left-width:4px;border-radius:10px;padding:11px 12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+  .card.can-drag{cursor:grab}
+  .card.can-drag:active{cursor:grabbing}
   .card.f-manutencao{border-left-color:var(--f-manut)}
   .card.f-acessorios{border-left-color:var(--f-acess)}
   .card.f-supervisao{border-left-color:var(--f-super)}
   .card.f-demanda{border-left-color:var(--f-dia)}
-  .card.urgent{box-shadow:0 0 0 1px var(--urgent), var(--shadow)}
-  .card-title{font-weight:600; font-size:14px; line-height:1.35}
-  .card-meta{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
-  .badge{
-    font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;
-  }
-  .badge.f-manutencao{background:var(--f-manut-bg); color:var(--f-manut)}
-  .badge.f-acessorios{background:var(--f-acess-bg); color:var(--f-acess)}
-  .badge.f-supervisao{background:var(--f-super-bg); color:var(--f-super)}
-  .badge.f-demanda{background:var(--f-dia-bg); color:var(--f-dia)}
-  .badge.urgent{background:var(--urgent-bg); color:var(--urgent)}
-  .badge.soft{background:var(--line2); color:var(--muted)}
-  .card-line{font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px}
-  .prazo.late{color:var(--urgent); font-weight:700}
-  .steps{display:flex; gap:3px; margin-top:2px}
-  .steps .s{flex:1; height:5px; border-radius:3px; background:var(--line)}
+  .card.urgent{box-shadow:0 0 0 1px var(--urgent),var(--shadow)}
+  .card-title{font-weight:600;font-size:14px;line-height:1.35}
+  .card-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px}
+  .badge.f-manutencao{background:var(--f-manut-bg);color:var(--f-manut)}
+  .badge.f-acessorios{background:var(--f-acess-bg);color:var(--f-acess)}
+  .badge.f-supervisao{background:var(--f-super-bg);color:var(--f-super)}
+  .badge.f-demanda{background:var(--f-dia-bg);color:var(--f-dia)}
+  .badge.urgent{background:var(--urgent-bg);color:var(--urgent)}
+  .badge.soft{background:var(--line2);color:var(--muted)}
+  .card-line{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+  .prazo.late{color:var(--urgent);font-weight:700}
+  .steps{display:flex;gap:3px;margin-top:2px}
+  .steps .s{flex:1;height:5px;border-radius:3px;background:var(--line)}
   .steps .s.on{background:var(--done)}
 
   /* ---------- MODAL ---------- */
-  .overlay{
-    position:fixed; inset:0; background:rgba(15,20,28,.5); display:none;
-    align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; z-index:20;
-  }
+  .overlay{position:fixed;inset:0;background:rgba(15,20,28,.5);display:none;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto;z-index:20}
   .overlay.show{display:flex}
-  .modal{
-    background:var(--panel); border-radius:16px; width:100%; max-width:560px; box-shadow:0 20px 50px rgba(0,0,0,.3);
-    border:1px solid var(--line);
-  }
-  .modal-head{display:flex; align-items:center; gap:10px; padding:18px 20px; border-bottom:1px solid var(--line)}
-  .modal-head h2{margin:0; font-size:17px}
-  .modal-head .x{margin-left:auto; border:none; background:transparent; font-size:22px; color:var(--muted); line-height:1; padding:4px 8px}
-  .modal-body{padding:18px 20px; display:grid; grid-template-columns:1fr 1fr; gap:14px}
-  .field{display:flex; flex-direction:column; gap:5px}
-  .field.full{grid-column:1 / -1}
-  .field label{font-size:12px; font-weight:700; color:var(--muted)}
-  .field input,.field select,.field textarea{
-    padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font-size:14px;
-  }
-  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand); border-color:transparent}
-  .field textarea{resize:vertical; min-height:60px}
-  .etapas{grid-column:1/-1; border:1px solid var(--line); border-radius:10px; padding:12px; background:var(--bg)}
-  .etapas h4{margin:0 0 8px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px}
-  .etapas .grid{display:grid; grid-template-columns:1fr 1fr; gap:6px}
-  .etapas label{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; cursor:pointer; padding:4px 0}
-  .etapas input{width:16px;height:16px; accent-color:var(--done)}
-  .modal-foot{display:flex; align-items:center; gap:10px; padding:16px 20px; border-top:1px solid var(--line)}
-  .modal-foot .del{margin-right:auto; color:var(--urgent); border-color:transparent; background:transparent; font-weight:600}
+  .modal{background:var(--panel);border-radius:16px;width:100%;max-width:560px;box-shadow:0 20px 50px rgba(0,0,0,.3);border:1px solid var(--line)}
+  .modal.modal-wide{max-width:820px}
+  .modal-head{display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .modal-head h2{margin:0;font-size:17px}
+  .modal-head .x{margin-left:auto;border:none;background:transparent;font-size:22px;color:var(--muted);line-height:1;padding:4px 8px}
+  .modal-body{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:12px;font-weight:700;color:var(--muted)}
+  .field input,.field select,.field textarea{padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand);border-color:transparent}
+  .field textarea{resize:vertical;min-height:60px}
+  .etapas{grid-column:1/-1;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--bg)}
+  .etapas h4{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .etapas .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .etapas label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;cursor:pointer;padding:4px 0}
+  .etapas input{width:16px;height:16px;accent-color:var(--done)}
+  .modal-foot{display:flex;align-items:center;gap:10px;padding:16px 20px;border-top:1px solid var(--line)}
+  .modal-foot .del{margin-right:auto;color:var(--urgent);border-color:transparent;background:transparent;font-weight:600}
   .modal-foot .del:hover{background:var(--urgent-bg)}
-
-  .empty-state{margin:auto; text-align:center; color:var(--muted); padding:40px}
-  .empty-state .big{font-size:40px; margin-bottom:8px}
-
   .hint{font-size:12px;color:var(--muted)}
 
-  /* ---------- RELATÓRIO ---------- */
-  .modal.modal-wide{max-width:820px}
-  .repmonth{margin-left:auto; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font-size:14px}
-  .rep-body{display:block !important}
-  .rep-title{font-size:18px; margin:0 0 14px}
-  .rep-cards{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
-  .rep-card{background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
-  .rep-card .n{font-size:22px; font-weight:800; line-height:1.1}
-  .rep-card .l{font-size:12px; color:var(--muted); margin-top:3px}
+  /* tabelas admin / relatório */
+  table.tb{width:100%;border-collapse:collapse;font-size:13px}
+  table.tb th,table.tb td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+  table.tb th{color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+  .pill{font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px}
+  .pill.on{background:var(--f-acess-bg);color:var(--f-acess)}
+  .pill.off{background:var(--urgent-bg);color:var(--urgent)}
+  .rep-title{font-size:18px;margin:0 0 14px}
+  .rep-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .rep-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .rep-card .n{font-size:22px;font-weight:800;line-height:1.1}
+  .rep-card .l{font-size:12px;color:var(--muted);margin-top:3px}
   .rep-sec{margin-top:20px}
-  .rep-sec h3{font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:0 0 8px}
-  table.rep{width:100%; border-collapse:collapse; font-size:13px}
-  table.rep th, table.rep td{text-align:left; padding:7px 9px; border-bottom:1px solid var(--line)}
-  table.rep th{color:var(--muted); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.3px}
+  .rep-sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:0 0 8px}
+  .repmonth{margin-left:auto;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px}
+  .rep-body{display:block !important}
   @media print{
     body *{visibility:hidden}
-    #repOverlay, #repOverlay *{visibility:visible}
-    #repOverlay{position:absolute; inset:0; background:#fff; color:#000; display:block; padding:0; overflow:visible}
-    #repOverlay .modal{max-width:100%; box-shadow:none; border:none; border-radius:0}
-    #repOverlay .modal-foot, #repOverlay .modal-head .x, .repmonth{display:none !important}
-    table.rep th, table.rep td{border-color:#ccc}
+    #repOverlay,#repOverlay *{visibility:visible}
+    #repOverlay{position:absolute;inset:0;background:#fff;color:#000;display:block;padding:0;overflow:visible}
+    #repOverlay .modal{max-width:100%;box-shadow:none;border:none;border-radius:0}
+    #repOverlay .modal-foot,#repOverlay .modal-head .x,.repmonth{display:none !important}
   }
-  @media (max-width:600px){ .rep-cards{grid-template-columns:1fr 1fr} }
-  @media (max-width:600px){
-    .modal-body{grid-template-columns:1fr}
-    .etapas .grid{grid-template-columns:1fr}
-    .search{margin-left:0; width:100%}
-    .search input{width:100%}
-  }
+  @media (max-width:600px){.modal-body{grid-template-columns:1fr}.etapas .grid{grid-template-columns:1fr}.rep-cards{grid-template-columns:1fr 1fr}.search{margin-left:0;width:100%}.search input{width:100%}}
 </style>
 
-<header>
-  <div class="brand">
+<!-- ===================== LOGIN ===================== -->
+<div id="authView" class="auth-wrap">
+  <div class="auth-card">
     <div class="logo">📌</div>
-    <div>Painel de Pautas<small>Compras &amp; Supervisão</small></div>
+    <h1 id="authTitle">Entrar no Painel</h1>
+    <div class="sub">Compras &amp; Supervisão</div>
+    <div id="nomeWrap" class="hidden">
+      <label>Seu nome</label>
+      <input id="a_nome" placeholder="Como quer ser chamado(a)">
+    </div>
+    <label>E-mail</label>
+    <input id="a_email" type="email" placeholder="voce@email.com" autocomplete="email">
+    <label>Senha</label>
+    <input id="a_pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="auth-btn" id="a_submit">Entrar</button>
+    <div class="auth-msg" id="a_msg"></div>
+    <div class="auth-toggle" id="a_toggle">Ainda não tem conta? <a id="a_switch">Criar conta</a></div>
   </div>
-  <div class="quickbar">
-    <input id="quick" placeholder="⚡ Captura rápida — digite uma pauta e tecle Enter…" autocomplete="off">
-    <button class="btn primary" id="btnNew">+ Nova pauta</button>
-  </div>
-  <button class="btn ghost sm" id="btnReport" title="Relatório mensal">📊 Relatório</button>
-  <button class="btn ghost sm" id="btnExport" title="Salvar backup dos dados">💾 Backup</button>
-  <button class="btn ghost sm" id="btnImport" title="Restaurar backup">📂 Restaurar</button>
-  <input type="file" id="fileImport" accept="application/json" hidden>
-</header>
-
-<div class="toolbar">
-  <div class="chips" id="filters">
-    <button class="chip active" data-f="todas">Todas</button>
-    <button class="chip" data-f="manutencao"><span class="dot" style="background:var(--f-manut)"></span>🔧 Manutenção</button>
-    <button class="chip" data-f="acessorios"><span class="dot" style="background:var(--f-acess)"></span>📱 Acessórios</button>
-    <button class="chip" data-f="supervisao"><span class="dot" style="background:var(--f-super)"></span>🧑‍💼 Supervisão</button>
-    <button class="chip" data-f="demanda"><span class="dot" style="background:var(--f-dia)"></span>⚡ Demanda do dia</button>
-  </div>
-  <label class="chip" style="cursor:pointer"><input type="checkbox" id="fUrgent" style="accent-color:var(--urgent)"> 🔴 Só urgentes</label>
-  <div class="search"><input id="search" placeholder="Buscar…" autocomplete="off"></div>
 </div>
 
-<div class="board" id="board"></div>
+<!-- ===================== AGUARDANDO APROVAÇÃO ===================== -->
+<div id="pendingView" class="auth-wrap hidden">
+  <div class="center-note">
+    <div style="font-size:44px">⏳</div>
+    <h1>Conta aguardando liberação</h1>
+    <p>Sua conta foi criada! Agora a administradora (Liliane) precisa liberar seu acesso. Assim que ela aprovar, é só recarregar a página.</p>
+    <button class="btn" id="p_logout">Sair</button>
+  </div>
+</div>
 
-<!-- MODAL -->
+<!-- ===================== APP ===================== -->
+<div id="appView" class="hidden">
+  <header>
+    <div class="hrow">
+      <div class="brand"><div class="logo">📌</div><div>Painel de Pautas<small>Compras &amp; Supervisão</small></div></div>
+      <div class="hright">
+        <button class="btn ghost sm" id="btnReport" title="Relatório mensal">📊 Relatório</button>
+        <button class="btn ghost sm admin-only" id="btnForn" title="Fornecedores">🏭 Fornecedores</button>
+        <button class="btn ghost sm admin-only" id="btnUsers" title="Usuários">👥 Usuários</button>
+        <div class="userchip"><div class="avatar" id="avatar">?</div><div><div id="uName" style="color:var(--ink);font-weight:600"></div><span class="role-badge" id="uRole"></span></div></div>
+        <button class="btn primary sm" id="btnLogout" title="Sair da conta">🚪 Sair</button>
+      </div>
+    </div>
+    <div class="quickbar" id="quickbar">
+      <input id="quick" placeholder="⚡ Captura rápida — digite e tecle Enter…" autocomplete="off">
+      <button class="btn primary" id="btnNew">+ Nova pauta</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="chips" id="filters">
+      <button class="chip active" data-f="todas">Todas</button>
+      <button class="chip" data-f="manutencao"><span class="dot" style="background:var(--f-manut)"></span>🔧 Manutenção</button>
+      <button class="chip" data-f="acessorios"><span class="dot" style="background:var(--f-acess)"></span>📱 Acessórios</button>
+      <button class="chip" data-f="supervisao"><span class="dot" style="background:var(--f-super)"></span>🧑‍💼 Supervisão</button>
+      <button class="chip" data-f="demanda"><span class="dot" style="background:var(--f-dia)"></span>⚡ Demanda do dia</button>
+    </div>
+    <label class="chip" style="cursor:pointer"><input type="checkbox" id="fUrgent" style="accent-color:var(--urgent)"> 🔴 Só urgentes</label>
+    <div class="search"><input id="search" placeholder="Buscar…" autocomplete="off"></div>
+  </div>
+
+  <div class="board" id="board"></div>
+</div>
+
+<!-- MODAL PAUTA -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <div class="modal-head">
-      <h2 id="modalTitle">Nova pauta</h2>
-      <button class="x" id="btnClose">&times;</button>
-    </div>
+    <div class="modal-head"><h2 id="modalTitle">Nova pauta</h2><button class="x" id="btnClose">&times;</button></div>
     <div class="modal-body">
-      <div class="field full">
-        <label>Título *</label>
-        <input id="f_titulo" placeholder="Ex: Repor tela iPhone 12">
-      </div>
-      <div class="field">
-        <label>Frente</label>
+      <div class="field full"><label>Título *</label><input id="f_titulo" placeholder="Ex: Repor tela iPhone 12"></div>
+      <div class="field"><label>Frente</label>
         <select id="f_frente">
           <option value="manutencao">🔧 Manutenção (iPhone/iPad)</option>
           <option value="acessorios">📱 Acessórios (Android)</option>
@@ -255,53 +242,20 @@
           <option value="demanda">⚡ Demanda do dia</option>
         </select>
       </div>
-      <div class="field">
-        <label>Situação (coluna)</label>
-        <select id="f_coluna"></select>
-      </div>
-      <div class="field">
-        <label>Tipo de item</label>
+      <div class="field"><label>Situação (coluna)</label><select id="f_coluna"></select></div>
+      <div class="field"><label>Tipo de item</label>
         <input id="f_tipo" list="tipos" placeholder="tela, bateria, capa…">
-        <datalist id="tipos">
-          <option>Tela</option><option>Bateria</option><option>Tampa traseira</option>
-          <option>Flex</option><option>Capa</option><option>Película</option>
-          <option>Escala da equipe</option><option>Outro</option>
-        </datalist>
+        <datalist id="tipos"><option>Tela</option><option>Bateria</option><option>Tampa traseira</option><option>Flex</option><option>Capa</option><option>Película</option><option>Escala da equipe</option><option>Outro</option></datalist>
       </div>
-      <div class="field">
-        <label>Fornecedor</label>
-        <input id="f_fornecedor" placeholder="Nome do fornecedor">
+      <div class="field"><label>SKU / Código</label><input id="f_sku" placeholder="Código da peça"></div>
+      <div class="field"><label>Fornecedor</label><select id="f_fornecedor"></select></div>
+      <div class="field"><label>Quantidade</label><input id="f_qtd" type="number" min="0" placeholder="0"></div>
+      <div class="field"><label>Valor (R$)</label><input id="f_valor" type="number" min="0" step="0.01" placeholder="0,00"></div>
+      <div class="field"><label>Prazo / previsão</label><input id="f_prazo" type="date"></div>
+      <div class="field"><label>Prioridade</label><select id="f_prioridade"><option value="normal">Normal</option><option value="urgente">🔴 Urgente</option></select></div>
+      <div class="field"><label>Origem</label>
+        <select id="f_origem"><option value="">—</option><option>Análise semanal</option><option>Análise quinzenal</option><option>Lançamento de aparelho</option><option>Surgiu no dia</option></select>
       </div>
-      <div class="field">
-        <label>Quantidade</label>
-        <input id="f_qtd" type="number" min="0" placeholder="0">
-      </div>
-      <div class="field">
-        <label>Valor (R$)</label>
-        <input id="f_valor" type="number" min="0" step="0.01" placeholder="0,00">
-      </div>
-      <div class="field">
-        <label>Prazo / previsão</label>
-        <input id="f_prazo" type="date">
-      </div>
-      <div class="field">
-        <label>Prioridade</label>
-        <select id="f_prioridade">
-          <option value="normal">Normal</option>
-          <option value="urgente">🔴 Urgente</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Origem</label>
-        <select id="f_origem">
-          <option value="">—</option>
-          <option value="Análise semanal">Análise semanal</option>
-          <option value="Análise quinzenal">Análise quinzenal</option>
-          <option value="Lançamento de aparelho">Lançamento de aparelho</option>
-          <option value="Surgiu no dia">Surgiu no dia</option>
-        </select>
-      </div>
-
       <div class="etapas" id="etapasBox">
         <h4>Etapas do processo de compra</h4>
         <div class="grid">
@@ -313,11 +267,7 @@
           <label><input type="checkbox" data-step="garantia"> Garantia acionada</label>
         </div>
       </div>
-
-      <div class="field full">
-        <label>Observações</label>
-        <textarea id="f_obs" placeholder="Detalhes, combinados, links…"></textarea>
-      </div>
+      <div class="field full"><label>Observações</label><textarea id="f_obs" placeholder="Detalhes, combinados, links…"></textarea></div>
     </div>
     <div class="modal-foot">
       <button class="btn del" id="btnDelete">🗑 Excluir</button>
@@ -327,14 +277,38 @@
   </div>
 </div>
 
+<!-- MODAL FORNECEDORES -->
+<div class="overlay" id="fornOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>🏭 Fornecedores</h2><button class="x" id="fornClose">&times;</button></div>
+    <div class="modal-body" style="display:block">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <input id="fn_nome" placeholder="Nome do fornecedor" style="flex:2;min-width:140px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)">
+        <input id="fn_contato" placeholder="Contato (opcional)" style="flex:1;min-width:120px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)">
+        <button class="btn primary" id="fn_add">+ Adicionar</button>
+      </div>
+      <table class="tb" id="fornTable"></table>
+    </div>
+    <div class="modal-foot"><button class="btn primary" id="fornCloseBtn" style="margin-left:auto">Fechar</button></div>
+  </div>
+</div>
+
+<!-- MODAL USUÁRIOS -->
+<div class="overlay" id="usersOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-head"><h2>👥 Usuários &amp; permissões</h2><button class="x" id="usersClose">&times;</button></div>
+    <div class="modal-body rep-body">
+      <p class="hint">Aprove quem pode acessar e defina o papel. <b>Admin</b> edita tudo; <b>Visualizador</b> só enxerga.</p>
+      <table class="tb" id="usersTable"></table>
+    </div>
+    <div class="modal-foot"><button class="btn primary" id="usersCloseBtn" style="margin-left:auto">Fechar</button></div>
+  </div>
+</div>
+
 <!-- MODAL RELATÓRIO -->
 <div class="overlay" id="repOverlay">
   <div class="modal modal-wide">
-    <div class="modal-head">
-      <h2>📊 Relatório</h2>
-      <input type="month" id="repMonth" class="repmonth">
-      <button class="x" id="repClose">&times;</button>
-    </div>
+    <div class="modal-head"><h2>📊 Relatório</h2><input type="month" id="repMonth" class="repmonth"><button class="x" id="repClose">&times;</button></div>
     <div class="modal-body rep-body" id="repContent"></div>
     <div class="modal-foot">
       <button class="btn ghost" id="repCsv">⬇ Exportar CSV (Excel)</button>
@@ -344,362 +318,384 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 "use strict";
-const STORAGE_KEY = "painel_pautas_v1";
+/* ====== CONFIG SUPABASE ====== */
+const SUPABASE_URL  = "https://qnguobieujbhjupcvmnq.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZ3VvYmlldWpiaGp1cGN2bW5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NDM0NzUsImV4cCI6MjEwMjExOTQ3NX0.1avLQ7m8TZczdLSb9hMj6P7Sn1QsLWXf0u6jbvVL0AA";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
+});
 
-const COLUNAS = [
-  {id:"inbox",   nome:"📥 Caixa de Entrada"},
-  {id:"todo",    nome:"📋 A Fazer"},
-  {id:"doing",   nome:"⏳ Em Andamento"},
-  {id:"waiting", nome:"🕓 Aguardando terceiros"},
-  {id:"done",    nome:"✅ Concluída"},
-];
-const FRENTES = {
-  manutencao:{nome:"Manutenção", emoji:"🔧"},
-  acessorios:{nome:"Acessórios", emoji:"📱"},
-  supervisao:{nome:"Supervisão", emoji:"🧑‍💼"},
-  demanda:{nome:"Demanda do dia", emoji:"⚡"},
-};
-const STEPS = ["solicitado","comprado","planilha","nf","conferencia","garantia"];
+/* ====== CONSTANTES ====== */
+const COLUNAS=[{id:"inbox",nome:"📥 Caixa de Entrada"},{id:"todo",nome:"📋 A Fazer"},{id:"doing",nome:"⏳ Em Andamento"},{id:"waiting",nome:"🕓 Aguardando terceiros"},{id:"done",nome:"✅ Concluída"}];
+const FRENTES={manutencao:{nome:"Manutenção",emoji:"🔧"},acessorios:{nome:"Acessórios",emoji:"📱"},supervisao:{nome:"Supervisão",emoji:"🧑‍💼"},demanda:{nome:"Demanda do dia",emoji:"⚡"}};
+const STEPS=["solicitado","comprado","planilha","nf","conferencia","garantia"];
 
-let pautas = load();
-let filtroFrente = "todas";
-let filtroBusca = "";
-let filtroUrgente = false;
-let editId = null;
+/* ====== ESTADO ====== */
+let me=null, pautas=[], fornecedores=[], usuarios=[];
+let filtroFrente="todas", filtroBusca="", filtroUrgente=false, editId=null, signupMode=false;
+const isAdmin=()=> me && me.papel==="admin";
 
-/* ---------- persistência ---------- */
-function load(){
-  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch(e){ return []; }
+/* ====== UTIL ====== */
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function hoje(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function fmtDate(iso){if(!iso)return "";const p=String(iso).slice(0,10).split("-");return p[2]+"/"+p[1]+"/"+p[0].slice(2);}
+function fmtValor(v){if(v===""||v==null||isNaN(v))return "";return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function show(el){el.classList.remove("hidden");}
+function hide(el){el.classList.add("hidden");}
+
+/* ====== AUTH ====== */
+async function init(){
+  const {data:{session}} = await sb.auth.getSession();
+  await handleSession(session);
+  sb.auth.onAuthStateChange((_e,s)=>handleSession(s));
 }
-function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(pautas)); }
-function markConclusao(p){
-  if(p.coluna==="done"){ if(!p.concluidoEm) p.concluidoEm = hoje(); }
-  else { p.concluidoEm = ""; }
+async function handleSession(session){
+  if(!session){ hide($("appView"));hide($("pendingView"));show($("authView")); return; }
+  me = await loadProfile(session.user.id);
+  // o perfil é criado por gatilho; se ainda não veio, tenta de novo
+  if(!me){ await new Promise(r=>setTimeout(r,800)); me=await loadProfile(session.user.id); }
+  if(!me){ hide($("appView"));show($("pendingView"));hide($("authView")); return; }
+  if(!me.aprovado){ hide($("appView"));show($("pendingView"));hide($("authView")); return; }
+  hide($("authView"));hide($("pendingView"));show($("appView"));
+  paintUser();
+  applyRoleUI();
+  await loadData();
+  subscribe();
 }
-function uid(){ return "p"+(pautas.reduce((m,p)=>Math.max(m, +String(p.id).slice(1)||0),0)+1)+"_"+(pautas.length); }
-
-/* ---------- util ---------- */
-function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-function hoje(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function fmtDate(iso){ if(!iso) return ""; const [y,m,d]=iso.split("-"); return d+"/"+m+"/"+y.slice(2); }
-function fmtValor(v){ if(v===""||v==null||isNaN(v)) return ""; return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}); }
-
-/* ---------- render ---------- */
-function render(){
-  const board = document.getElementById("board");
-  board.innerHTML = "";
-  const termo = filtroBusca.trim().toLowerCase();
-
-  const visiveis = pautas.filter(p=>{
-    if(filtroFrente!=="todas" && p.frente!==filtroFrente) return false;
-    if(filtroUrgente && p.prioridade!=="urgente") return false;
-    if(termo){
-      const blob = (p.titulo+" "+(p.fornecedor||"")+" "+(p.tipo||"")+" "+(p.obs||"")).toLowerCase();
-      if(!blob.includes(termo)) return false;
+async function loadProfile(id){
+  const {data} = await sb.from("profiles").select("*").eq("id",id).maybeSingle();
+  return data;
+}
+function paintUser(){
+  $("uName").textContent = me.nome||me.email;
+  $("uRole").textContent = me.papel==="admin"?"Admin":"Visualizador";
+  $("avatar").textContent = (me.nome||me.email||"?").trim().charAt(0).toUpperCase();
+}
+function applyRoleUI(){
+  const admin=isAdmin();
+  document.querySelectorAll(".admin-only").forEach(el=>el.classList.toggle("hidden",!admin));
+  $("quickbar").style.display = admin?"":"none";
+}
+async function doAuth(){
+  const email=$("a_email").value.trim(), pass=$("a_pass").value, nome=$("a_nome").value.trim();
+  const msg=$("a_msg"); msg.className="auth-msg";
+  if(!email||!pass){ msg.className="auth-msg err"; msg.textContent="Preencha e-mail e senha."; return; }
+  $("a_submit").disabled=true;
+  try{
+    if(signupMode){
+      const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{nome}}});
+      if(error) throw error;
+      if(!data.session){ msg.className="auth-msg ok"; msg.textContent="Conta criada! Se pedir, confirme pelo e-mail e depois entre."; setAuthMode(false); }
+    }else{
+      const {error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error) throw error;
     }
+  }catch(e){
+    msg.className="auth-msg err";
+    msg.textContent = traduzErro(e.message||"Erro ao entrar.");
+  }finally{ $("a_submit").disabled=false; }
+}
+function traduzErro(m){
+  if(/Invalid login/i.test(m)) return "E-mail ou senha incorretos.";
+  if(/already registered/i.test(m)) return "Este e-mail já tem conta. Faça login.";
+  if(/at least 6/i.test(m)) return "A senha precisa ter ao menos 6 caracteres.";
+  return m;
+}
+function setAuthMode(signup){
+  signupMode=signup;
+  $("authTitle").textContent=signup?"Criar conta":"Entrar no Painel";
+  $("a_submit").textContent=signup?"Criar conta":"Entrar";
+  $("nomeWrap").classList.toggle("hidden",!signup);
+  $("a_toggle").innerHTML = signup ? 'Já tem conta? <a id="a_switch">Entrar</a>' : 'Ainda não tem conta? <a id="a_switch">Criar conta</a>';
+  $("a_switch").onclick=()=>setAuthMode(!signupMode);
+  $("a_msg").className="auth-msg";
+}
+
+/* ====== DADOS ====== */
+async function loadData(){
+  const [{data:pt},{data:fo}] = await Promise.all([
+    sb.from("pautas").select("*").order("criado_em",{ascending:false}),
+    sb.from("fornecedores").select("*").order("nome")
+  ]);
+  pautas=pt||[]; fornecedores=fo||[];
+  render();
+}
+function subscribe(){
+  sb.channel("realtime-pautas")
+    .on("postgres_changes",{event:"*",schema:"public",table:"pautas"},loadData)
+    .on("postgres_changes",{event:"*",schema:"public",table:"fornecedores"},loadData)
+    .subscribe();
+}
+
+/* ====== RENDER BOARD ====== */
+function render(){
+  const board=$("board"); board.innerHTML="";
+  const termo=filtroBusca.trim().toLowerCase();
+  const vis=pautas.filter(p=>{
+    if(filtroFrente!=="todas"&&p.frente!==filtroFrente)return false;
+    if(filtroUrgente&&p.prioridade!=="urgente")return false;
+    if(termo){const b=(p.titulo+" "+(p.fornecedor_nome||"")+" "+(p.tipo||"")+" "+(p.sku||"")+" "+(p.obs||"")).toLowerCase();if(!b.includes(termo))return false;}
     return true;
   });
-
   COLUNAS.forEach(col=>{
-    const itens = visiveis.filter(p=>p.coluna===col.id);
-    const el = document.createElement("div");
-    el.className="col";
-    el.innerHTML = `<div class="col-head">${esc(col.nome)}<span class="count">${itens.length}</span></div>`;
-    const body = document.createElement("div");
-    body.className="col-body"; body.dataset.col=col.id;
-
-    if(itens.length===0){
-      body.innerHTML = `<div class="col-empty">Sem pautas aqui</div>`;
-    }else{
-      itens.forEach(p=> body.appendChild(cardEl(p)) );
+    const itens=vis.filter(p=>p.coluna===col.id);
+    const el=document.createElement("div"); el.className="col";
+    el.innerHTML=`<div class="col-head">${esc(col.nome)}<span class="count">${itens.length}</span></div>`;
+    const body=document.createElement("div"); body.className="col-body"; body.dataset.col=col.id;
+    if(itens.length===0) body.innerHTML=`<div class="col-empty">Sem pautas aqui</div>`;
+    else itens.forEach(p=>body.appendChild(cardEl(p)));
+    if(isAdmin()){
+      body.addEventListener("dragover",e=>{e.preventDefault();body.classList.add("drop");});
+      body.addEventListener("dragleave",()=>body.classList.remove("drop"));
+      body.addEventListener("drop",async e=>{
+        e.preventDefault();body.classList.remove("drop");
+        const id=e.dataTransfer.getData("text/plain");
+        const p=pautas.find(x=>x.id===id);
+        if(p&&p.coluna!==col.id){ await moverPauta(p,col.id); }
+      });
     }
-    // drag & drop na coluna
-    body.addEventListener("dragover", e=>{ e.preventDefault(); body.classList.add("drop"); });
-    body.addEventListener("dragleave", ()=> body.classList.remove("drop"));
-    body.addEventListener("drop", e=>{
-      e.preventDefault(); body.classList.remove("drop");
-      const id = e.dataTransfer.getData("text/plain");
-      const p = pautas.find(x=>x.id===id);
-      if(p && p.coluna!==col.id){ p.coluna=col.id; markConclusao(p); save(); render(); }
-    });
-    el.appendChild(body);
-    board.appendChild(el);
+    el.appendChild(body); board.appendChild(el);
   });
 }
-
 function cardEl(p){
-  const c = document.createElement("div");
-  c.className = "card f-"+p.frente + (p.prioridade==="urgente"?" urgent":"");
-  c.draggable = true;
-  c.addEventListener("dragstart", e=> e.dataTransfer.setData("text/plain", p.id));
-  c.addEventListener("click", ()=> openModal(p.id));
-
-  const fr = FRENTES[p.frente];
-  let meta = `<span class="badge f-${p.frente}">${fr.emoji} ${esc(fr.nome)}</span>`;
-  if(p.prioridade==="urgente") meta += `<span class="badge urgent">🔴 Urgente</span>`;
-  if(p.tipo) meta += `<span class="badge soft">${esc(p.tipo)}</span>`;
-
-  let linhas = "";
-  if(p.fornecedor) linhas += `<div class="card-line">🏭 ${esc(p.fornecedor)}${p.qtd?` · ${esc(p.qtd)} un`:""}</div>`;
-  else if(p.qtd) linhas += `<div class="card-line">📦 ${esc(p.qtd)} un</div>`;
-  if(p.valor!=="" && p.valor!=null) linhas += `<div class="card-line">💰 ${esc(fmtValor(p.valor))}</div>`;
-  if(p.prazo){
-    const late = p.prazo < hoje() && p.coluna!=="done";
-    linhas += `<div class="card-line prazo ${late?"late":""}">📅 ${esc(fmtDate(p.prazo))}${late?" (vencido)":""}</div>`;
-  }
-
-  // barra de etapas (só compras)
-  let steps = "";
-  if(p.frente==="manutencao" || p.frente==="acessorios"){
-    steps = `<div class="steps" title="Etapas concluídas">`+
-      STEPS.map(s=>`<span class="s ${p.etapas&&p.etapas[s]?"on":""}"></span>`).join("")+`</div>`;
-  }
-
-  c.innerHTML = `<div class="card-title">${esc(p.titulo)}</div>
-    <div class="card-meta">${meta}</div>${linhas}${steps}`;
+  const c=document.createElement("div");
+  c.className="card f-"+p.frente+(p.prioridade==="urgente"?" urgent":"")+(isAdmin()?" can-drag":"");
+  if(isAdmin()){ c.draggable=true; c.addEventListener("dragstart",e=>e.dataTransfer.setData("text/plain",p.id)); }
+  c.addEventListener("click",()=>openModal(p.id));
+  const fr=FRENTES[p.frente]||{emoji:"",nome:p.frente};
+  let meta=`<span class="badge f-${p.frente}">${fr.emoji} ${esc(fr.nome)}</span>`;
+  if(p.prioridade==="urgente")meta+=`<span class="badge urgent">🔴 Urgente</span>`;
+  if(p.tipo)meta+=`<span class="badge soft">${esc(p.tipo)}</span>`;
+  let l="";
+  if(p.sku)l+=`<div class="card-line">🔖 ${esc(p.sku)}</div>`;
+  if(p.fornecedor_nome)l+=`<div class="card-line">🏭 ${esc(p.fornecedor_nome)}${p.quantidade?` · ${esc(p.quantidade)} un`:""}</div>`;
+  else if(p.quantidade)l+=`<div class="card-line">📦 ${esc(p.quantidade)} un</div>`;
+  if(p.valor!=null&&p.valor!=="")l+=`<div class="card-line">💰 ${esc(fmtValor(p.valor))}</div>`;
+  if(p.prazo){const late=String(p.prazo).slice(0,10)<hoje()&&p.coluna!=="done";l+=`<div class="card-line prazo ${late?"late":""}">📅 ${esc(fmtDate(p.prazo))}${late?" (vencido)":""}</div>`;}
+  let steps="";
+  if(p.frente==="manutencao"||p.frente==="acessorios"){steps=`<div class="steps">`+STEPS.map(s=>`<span class="s ${p.etapas&&p.etapas[s]?"on":""}"></span>`).join("")+`</div>`;}
+  c.innerHTML=`<div class="card-title">${esc(p.titulo)}</div><div class="card-meta">${meta}</div>${l}${steps}`;
   return c;
 }
+async function moverPauta(p,coluna){
+  const patch={coluna};
+  patch.concluido_em = coluna==="done" ? (p.concluido_em||new Date().toISOString()) : null;
+  p.coluna=coluna; p.concluido_em=patch.concluido_em; render();
+  const {error}=await sb.from("pautas").update(patch).eq("id",p.id);
+  if(error){ alert("Erro ao mover: "+error.message); loadData(); }
+}
 
-/* ---------- modal ---------- */
-const overlay = document.getElementById("overlay");
-function fillColunaSelect(){
-  const sel = document.getElementById("f_coluna");
-  sel.innerHTML = COLUNAS.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+/* ====== MODAL PAUTA ====== */
+const overlay=$("overlay");
+function fillColunaSelect(){$("f_coluna").innerHTML=COLUNAS.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");}
+function fillFornecedorSelect(sel){
+  $("f_fornecedor").innerHTML=`<option value="">— nenhum —</option>`+fornecedores.map(f=>`<option value="${f.id}" ${f.id===sel?"selected":""}>${esc(f.nome)}</option>`).join("");
 }
 function openModal(id){
-  editId = id;
-  const isNew = !id;
-  const p = id ? pautas.find(x=>x.id===id) : {frente:"manutencao", coluna:"inbox", prioridade:"normal", etapas:{}};
-  document.getElementById("modalTitle").textContent = isNew ? "Nova pauta" : "Editar pauta";
-  document.getElementById("btnDelete").style.display = isNew ? "none" : "";
-  document.getElementById("f_titulo").value = p.titulo || "";
-  document.getElementById("f_frente").value = p.frente || "manutencao";
-  document.getElementById("f_coluna").value = p.coluna || "inbox";
-  document.getElementById("f_tipo").value = p.tipo || "";
-  document.getElementById("f_fornecedor").value = p.fornecedor || "";
-  document.getElementById("f_qtd").value = p.qtd ?? "";
-  document.getElementById("f_valor").value = p.valor ?? "";
-  document.getElementById("f_prazo").value = p.prazo || "";
-  document.getElementById("f_prioridade").value = p.prioridade || "normal";
-  document.getElementById("f_origem").value = p.origem || "";
-  document.getElementById("f_obs").value = p.obs || "";
-  STEPS.forEach(s=>{
-    document.querySelector(`[data-step="${s}"]`).checked = !!(p.etapas && p.etapas[s]);
-  });
+  if(!isAdmin()){ openReadonly(id); return; }
+  editId=id; const isNew=!id;
+  const p=id?pautas.find(x=>x.id===id):{frente:"manutencao",coluna:"inbox",prioridade:"normal",etapas:{}};
+  $("modalTitle").textContent=isNew?"Nova pauta":"Editar pauta";
+  $("btnDelete").style.display=isNew?"none":"";
+  $("f_titulo").value=p.titulo||"";
+  $("f_frente").value=p.frente||"manutencao";
+  $("f_coluna").value=p.coluna||"inbox";
+  $("f_tipo").value=p.tipo||"";
+  $("f_sku").value=p.sku||"";
+  fillFornecedorSelect(p.fornecedor_id||"");
+  $("f_qtd").value=p.quantidade??"";
+  $("f_valor").value=p.valor??"";
+  $("f_prazo").value=p.prazo?String(p.prazo).slice(0,10):"";
+  $("f_prioridade").value=p.prioridade||"normal";
+  $("f_origem").value=p.origem||"";
+  $("f_obs").value=p.obs||"";
+  STEPS.forEach(s=>{document.querySelector(`[data-step="${s}"]`).checked=!!(p.etapas&&p.etapas[s]);});
   toggleEtapas();
-  overlay.classList.add("show");
-  setTimeout(()=>document.getElementById("f_titulo").focus(),50);
+  overlay.classList.add("show"); setTimeout(()=>$("f_titulo").focus(),50);
 }
-function closeModal(){ overlay.classList.remove("show"); editId=null; }
-function toggleEtapas(){
-  const fr = document.getElementById("f_frente").value;
-  document.getElementById("etapasBox").style.display = (fr==="manutencao"||fr==="acessorios") ? "" : "none";
+function openReadonly(id){
+  const p=pautas.find(x=>x.id===id); if(!p)return;
+  const fr=FRENTES[p.frente]||{emoji:"",nome:p.frente};
+  let txt=`${p.titulo}\n\nFrente: ${fr.nome}\nSituação: ${(COLUNAS.find(c=>c.id===p.coluna)||{}).nome||p.coluna}`;
+  if(p.tipo)txt+=`\nTipo: ${p.tipo}`;
+  if(p.sku)txt+=`\nSKU: ${p.sku}`;
+  if(p.fornecedor_nome)txt+=`\nFornecedor: ${p.fornecedor_nome}`;
+  if(p.quantidade)txt+=`\nQtd: ${p.quantidade}`;
+  if(p.valor!=null&&p.valor!=="")txt+=`\nValor: ${fmtValor(p.valor)}`;
+  if(p.prazo)txt+=`\nPrazo: ${fmtDate(p.prazo)}`;
+  if(p.obs)txt+=`\n\nObs: ${p.obs}`;
+  alert(txt);
 }
-function saveModal(){
-  const titulo = document.getElementById("f_titulo").value.trim();
-  if(!titulo){ alert("Dê um título à pauta."); document.getElementById("f_titulo").focus(); return; }
-  const etapas = {};
-  STEPS.forEach(s=> etapas[s] = document.querySelector(`[data-step="${s}"]`).checked );
-  const dados = {
-    titulo,
-    frente: document.getElementById("f_frente").value,
-    coluna: document.getElementById("f_coluna").value,
-    tipo: document.getElementById("f_tipo").value.trim(),
-    fornecedor: document.getElementById("f_fornecedor").value.trim(),
-    qtd: document.getElementById("f_qtd").value,
-    valor: document.getElementById("f_valor").value,
-    prazo: document.getElementById("f_prazo").value,
-    prioridade: document.getElementById("f_prioridade").value,
-    origem: document.getElementById("f_origem").value,
-    obs: document.getElementById("f_obs").value.trim(),
-    etapas,
+function closeModal(){overlay.classList.remove("show");editId=null;}
+function toggleEtapas(){const fr=$("f_frente").value;$("etapasBox").style.display=(fr==="manutencao"||fr==="acessorios")?"":"none";}
+async function saveModal(){
+  const titulo=$("f_titulo").value.trim();
+  if(!titulo){alert("Dê um título à pauta.");$("f_titulo").focus();return;}
+  const etapas={};STEPS.forEach(s=>etapas[s]=document.querySelector(`[data-step="${s}"]`).checked);
+  const fid=$("f_fornecedor").value||null;
+  const fnome=fid?(fornecedores.find(f=>f.id===fid)||{}).nome||"":"";
+  const coluna=$("f_coluna").value;
+  const dados={
+    titulo, frente:$("f_frente").value, coluna,
+    tipo:$("f_tipo").value.trim()||null, sku:$("f_sku").value.trim()||null,
+    fornecedor_id:fid, fornecedor_nome:fnome,
+    quantidade:$("f_qtd").value===""?null:Number($("f_qtd").value),
+    valor:$("f_valor").value===""?null:Number($("f_valor").value),
+    prazo:$("f_prazo").value||null,
+    prioridade:$("f_prioridade").value, origem:$("f_origem").value||null,
+    obs:$("f_obs").value.trim()||null, etapas
   };
-  let p;
-  if(editId){
-    p = pautas.find(x=>x.id===editId);
-    Object.assign(p, dados);
-  }else{
-    dados.id = uid();
-    dados.criadoEm = hoje();
-    p = dados;
-    pautas.unshift(dados);
-  }
-  markConclusao(p);
-  save(); render(); closeModal();
+  $("btnSave").disabled=true;
+  try{
+    if(editId){
+      const atual=pautas.find(x=>x.id===editId);
+      dados.concluido_em = coluna==="done" ? (atual.concluido_em||new Date().toISOString()) : null;
+      const {error}=await sb.from("pautas").update(dados).eq("id",editId); if(error)throw error;
+    }else{
+      dados.concluido_em = coluna==="done" ? new Date().toISOString() : null;
+      dados.created_by = me.id;
+      const {error}=await sb.from("pautas").insert(dados); if(error)throw error;
+    }
+    await loadData(); closeModal();
+  }catch(e){ alert("Erro ao salvar: "+e.message); }
+  finally{ $("btnSave").disabled=false; }
 }
-function deleteCurrent(){
-  if(!editId) return;
+async function deleteCurrent(){
+  if(!editId)return;
   if(confirm("Excluir esta pauta?")){
-    pautas = pautas.filter(x=>x.id!==editId);
-    save(); render(); closeModal();
+    const {error}=await sb.from("pautas").delete().eq("id",editId);
+    if(error){alert("Erro: "+error.message);return;}
+    await loadData(); closeModal();
   }
 }
+async function quickAdd(){
+  const inp=$("quick"); const t=inp.value.trim(); if(!t)return;
+  const {error}=await sb.from("pautas").insert({titulo:t,frente:"demanda",coluna:"inbox",prioridade:"normal",origem:"Surgiu no dia",etapas:{},created_by:me.id});
+  if(error){alert("Erro: "+error.message);return;}
+  inp.value=""; await loadData(); inp.focus();
+}
 
-/* ---------- captura rápida ---------- */
-function quickAdd(){
-  const inp = document.getElementById("quick");
-  const t = inp.value.trim();
-  if(!t) return;
-  pautas.unshift({
-    id:uid(), titulo:t, frente:"demanda", coluna:"inbox",
-    tipo:"", fornecedor:"", qtd:"", valor:"", prazo:"",
-    prioridade:"normal", origem:"Surgiu no dia", obs:"", etapas:{},
-    criadoEm:hoje()
+/* ====== FORNECEDORES ====== */
+function openForn(){renderForn();$("fornOverlay").classList.add("show");}
+function renderForn(){
+  const t=$("fornTable");
+  t.innerHTML=`<tr><th>Nome</th><th>Contato</th><th></th></tr>`+
+    (fornecedores.length?fornecedores.map(f=>`<tr>
+      <td>${esc(f.nome)}</td><td>${esc(f.contato||"—")}</td>
+      <td style="text-align:right"><button class="btn sm ghost" data-del="${f.id}" style="color:var(--urgent)">Excluir</button></td>
+    </tr>`).join(""):`<tr><td colspan="3" class="hint">Nenhum fornecedor ainda.</td></tr>`);
+  t.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+    if(confirm("Excluir fornecedor?")){const {error}=await sb.from("fornecedores").delete().eq("id",b.dataset.del);if(error){alert(error.message);return;}await loadData();renderForn();}
   });
-  save(); render(); inp.value=""; inp.focus();
+}
+async function addForn(){
+  const nome=$("fn_nome").value.trim(); if(!nome){$("fn_nome").focus();return;}
+  const {error}=await sb.from("fornecedores").insert({nome,contato:$("fn_contato").value.trim()||null});
+  if(error){alert(error.message);return;}
+  $("fn_nome").value="";$("fn_contato").value="";
+  await loadData(); renderForn();
 }
 
-/* ---------- backup ---------- */
-function exportar(){
-  const blob = new Blob([JSON.stringify(pautas,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "backup-pautas-"+hoje()+".json";
-  a.click();
+/* ====== USUÁRIOS ====== */
+async function openUsers(){
+  const {data}=await sb.from("profiles").select("*").order("criado_em");
+  usuarios=data||[]; renderUsers(); $("usersOverlay").classList.add("show");
 }
-function importar(file){
-  const rd = new FileReader();
-  rd.onload = ()=>{
-    try{
-      const dados = JSON.parse(rd.result);
-      if(!Array.isArray(dados)) throw 0;
-      if(confirm("Isto vai substituir as pautas atuais pelas do backup. Continuar?")){
-        pautas = dados; save(); render();
-      }
-    }catch(e){ alert("Arquivo de backup inválido."); }
-  };
-  rd.readAsText(file);
+function renderUsers(){
+  const t=$("usersTable");
+  t.innerHTML=`<tr><th>Nome</th><th>E-mail</th><th>Papel</th><th>Acesso</th><th></th></tr>`+
+    usuarios.map(u=>{
+      const self=u.id===me.id;
+      return `<tr>
+        <td>${esc(u.nome||"—")}${self?' <span class="hint">(você)</span>':''}</td>
+        <td>${esc(u.email||"")}</td>
+        <td>${self?'<span class="pill on">Admin</span>':`<select data-role="${u.id}" style="padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)"><option value="viewer" ${u.papel==="viewer"?"selected":""}>Visualizador</option><option value="admin" ${u.papel==="admin"?"selected":""}>Admin</option></select>`}</td>
+        <td><span class="pill ${u.aprovado?"on":"off"}">${u.aprovado?"Liberado":"Pendente"}</span></td>
+        <td style="text-align:right">${self?'':`<button class="btn sm" data-appr="${u.id}" data-val="${u.aprovado?0:1}">${u.aprovado?"Revogar":"Liberar"}</button>`}</td>
+      </tr>`;
+    }).join("");
+  t.querySelectorAll("[data-role]").forEach(s=>s.onchange=async()=>{
+    const {error}=await sb.from("profiles").update({papel:s.value}).eq("id",s.dataset.role);
+    if(error)alert(error.message); else openUsers();
+  });
+  t.querySelectorAll("[data-appr]").forEach(b=>b.onclick=async()=>{
+    const {error}=await sb.from("profiles").update({aprovado:b.dataset.val==="1"}).eq("id",b.dataset.appr);
+    if(error)alert(error.message); else openUsers();
+  });
 }
 
-/* ---------- eventos ---------- */
-document.getElementById("btnNew").onclick = ()=>openModal(null);
-document.getElementById("btnClose").onclick = closeModal;
-document.getElementById("btnCancel").onclick = closeModal;
-document.getElementById("btnSave").onclick = saveModal;
-document.getElementById("btnDelete").onclick = deleteCurrent;
-document.getElementById("f_frente").onchange = toggleEtapas;
-overlay.addEventListener("click", e=>{ if(e.target===overlay) closeModal(); });
-document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("show")) closeModal(); });
-
-document.getElementById("quick").addEventListener("keydown", e=>{ if(e.key==="Enter") quickAdd(); });
-
-document.getElementById("filters").addEventListener("click", e=>{
-  const b = e.target.closest(".chip"); if(!b) return;
-  filtroFrente = b.dataset.f;
-  document.querySelectorAll("#filters .chip").forEach(c=>c.classList.toggle("active", c===b));
-  render();
-});
-document.getElementById("fUrgent").addEventListener("change", e=>{ filtroUrgente=e.target.checked; render(); });
-document.getElementById("search").addEventListener("input", e=>{ filtroBusca=e.target.value; render(); });
-
-document.getElementById("btnExport").onclick = exportar;
-document.getElementById("btnImport").onclick = ()=>document.getElementById("fileImport").click();
-document.getElementById("fileImport").addEventListener("change", e=>{ if(e.target.files[0]) importar(e.target.files[0]); e.target.value=""; });
-
-/* ---------- relatório mensal ---------- */
-const repOverlay = document.getElementById("repOverlay");
-const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
-function ymOf(iso){ return iso ? String(iso).slice(0,7) : ""; }
-function currentYM(){ return hoje().slice(0,7); }
-function monthLabel(ym){ if(!ym) return ""; const [y,m]=ym.split("-"); return MESES[+m-1]+" de "+y; }
-function colNome(id){ const c=COLUNAS.find(x=>x.id===id); return c?c.nome:id; }
-function pautasDoMes(ym){ return pautas.filter(p=> ymOf(p.criadoEm)===ym || ymOf(p.concluidoEm)===ym ); }
-function agrupar(lista, chave){
-  const m={};
-  lista.forEach(p=>{ const k=(p[chave]||"—"); if(!m[k]) m[k]={qtd:0,valor:0}; m[k].qtd++; m[k].valor+=parseFloat(p.valor)||0; });
-  return Object.entries(m).sort((a,b)=>b[1].qtd-a[1].qtd);
-}
-function openReport(){ document.getElementById("repMonth").value=currentYM(); buildReport(); repOverlay.classList.add("show"); }
-
+/* ====== RELATÓRIO ====== */
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+function ymOf(iso){return iso?String(iso).slice(0,7):"";}
+function currentYM(){return hoje().slice(0,7);}
+function monthLabel(ym){if(!ym)return "";const[y,m]=ym.split("-");return MESES[+m-1]+" de "+y;}
+function colNome(id){const c=COLUNAS.find(x=>x.id===id);return c?c.nome:id;}
+function pautasDoMes(ym){return pautas.filter(p=>ymOf(p.criado_em)===ym||ymOf(p.concluido_em)===ym);}
+function agrupar(lista,chave){const m={};lista.forEach(p=>{const k=(p[chave]||"—");if(!m[k])m[k]={qtd:0,valor:0};m[k].qtd++;m[k].valor+=parseFloat(p.valor)||0;});return Object.entries(m).sort((a,b)=>b[1].qtd-a[1].qtd);}
+function openReport(){$("repMonth").value=currentYM();buildReport();$("repOverlay").classList.add("show");}
 function buildReport(){
-  const ym = document.getElementById("repMonth").value || currentYM();
-  const criadas = pautas.filter(p=> ymOf(p.criadoEm)===ym);
-  const concluidas = pautas.filter(p=> ymOf(p.concluidoEm)===ym);
-  const doMes = pautasDoMes(ym);
-  const urgentes = criadas.filter(p=> p.prioridade==="urgente").length;
-  const somaValor = criadas.reduce((s,p)=> s+(parseFloat(p.valor)||0),0);
-
-  let html = `<h2 class="rep-title">Relatório de ${esc(monthLabel(ym))}</h2>`;
-  html += `<div class="rep-cards">
+  const ym=$("repMonth").value||currentYM();
+  const criadas=pautas.filter(p=>ymOf(p.criado_em)===ym);
+  const concluidas=pautas.filter(p=>ymOf(p.concluido_em)===ym);
+  const doMes=pautasDoMes(ym);
+  const urgentes=criadas.filter(p=>p.prioridade==="urgente").length;
+  const somaValor=criadas.reduce((s,p)=>s+(parseFloat(p.valor)||0),0);
+  let h=`<h2 class="rep-title">Relatório de ${esc(monthLabel(ym))}</h2>`;
+  h+=`<div class="rep-cards">
     <div class="rep-card"><div class="n">${criadas.length}</div><div class="l">Pautas criadas</div></div>
     <div class="rep-card"><div class="n">${concluidas.length}</div><div class="l">Concluídas no mês</div></div>
     <div class="rep-card"><div class="n">${urgentes}</div><div class="l">Urgentes</div></div>
-    <div class="rep-card"><div class="n">${esc(fmtValor(somaValor)||"R$ 0,00")}</div><div class="l">Valor lançado</div></div>
-  </div>`;
-
-  html += `<div class="rep-sec"><h3>Por frente</h3><table class="rep"><tr><th>Frente</th><th>Criadas</th><th>Concluídas</th><th>Valor</th></tr>`;
-  Object.keys(FRENTES).forEach(f=>{
-    const c = criadas.filter(p=>p.frente===f);
-    const cc = concluidas.filter(p=>p.frente===f).length;
-    if(c.length||cc){
-      const v = c.reduce((s,p)=>s+(parseFloat(p.valor)||0),0);
-      html += `<tr><td>${FRENTES[f].emoji} ${esc(FRENTES[f].nome)}</td><td>${c.length}</td><td>${cc}</td><td>${esc(fmtValor(v)||"—")}</td></tr>`;
-    }
-  });
-  html += `</table></div>`;
-
-  const tipos = agrupar(criadas.filter(p=>p.tipo), "tipo");
-  if(tipos.length){
-    html += `<div class="rep-sec"><h3>Por tipo de item</h3><table class="rep"><tr><th>Tipo</th><th>Qtd</th><th>Valor</th></tr>`;
-    tipos.forEach(([k,v])=> html += `<tr><td>${esc(k)}</td><td>${v.qtd}</td><td>${esc(fmtValor(v.valor)||"—")}</td></tr>`);
-    html += `</table></div>`;
-  }
-  const forn = agrupar(criadas.filter(p=>p.fornecedor), "fornecedor");
-  if(forn.length){
-    html += `<div class="rep-sec"><h3>Por fornecedor</h3><table class="rep"><tr><th>Fornecedor</th><th>Qtd</th><th>Valor</th></tr>`;
-    forn.forEach(([k,v])=> html += `<tr><td>${esc(k)}</td><td>${v.qtd}</td><td>${esc(fmtValor(v.valor)||"—")}</td></tr>`);
-    html += `</table></div>`;
-  }
-
-  html += `<div class="rep-sec"><h3>Detalhamento (${doMes.length})</h3>`;
-  if(doMes.length===0){ html += `<p class="hint">Nenhuma pauta neste mês.</p>`; }
-  else{
-    html += `<table class="rep"><tr><th>Título</th><th>Frente</th><th>Tipo</th><th>Fornecedor</th><th>Qtd</th><th>Valor</th><th>Situação</th></tr>`;
-    doMes.forEach(p=>{
-      html += `<tr><td>${esc(p.titulo)}</td><td>${FRENTES[p.frente].emoji}</td><td>${esc(p.tipo||"—")}</td><td>${esc(p.fornecedor||"—")}</td><td>${esc(p.qtd||"—")}</td><td>${esc(fmtValor(p.valor)||"—")}</td><td>${esc(colNome(p.coluna))}</td></tr>`;
-    });
-    html += `</table>`;
-  }
-  html += `</div>`;
-  document.getElementById("repContent").innerHTML = html;
+    <div class="rep-card"><div class="n">${esc(fmtValor(somaValor)||"R$ 0,00")}</div><div class="l">Valor lançado</div></div></div>`;
+  h+=`<div class="rep-sec"><h3>Por frente</h3><table class="tb"><tr><th>Frente</th><th>Criadas</th><th>Concluídas</th><th>Valor</th></tr>`;
+  Object.keys(FRENTES).forEach(f=>{const c=criadas.filter(p=>p.frente===f);const cc=concluidas.filter(p=>p.frente===f).length;if(c.length||cc){const v=c.reduce((s,p)=>s+(parseFloat(p.valor)||0),0);h+=`<tr><td>${FRENTES[f].emoji} ${esc(FRENTES[f].nome)}</td><td>${c.length}</td><td>${cc}</td><td>${esc(fmtValor(v)||"—")}</td></tr>`;}});
+  h+=`</table></div>`;
+  const tipos=agrupar(criadas.filter(p=>p.tipo),"tipo");
+  if(tipos.length){h+=`<div class="rep-sec"><h3>Por tipo de item</h3><table class="tb"><tr><th>Tipo</th><th>Qtd</th><th>Valor</th></tr>`;tipos.forEach(([k,v])=>h+=`<tr><td>${esc(k)}</td><td>${v.qtd}</td><td>${esc(fmtValor(v.valor)||"—")}</td></tr>`);h+=`</table></div>`;}
+  const forn=agrupar(criadas.filter(p=>p.fornecedor_nome),"fornecedor_nome");
+  if(forn.length){h+=`<div class="rep-sec"><h3>Por fornecedor</h3><table class="tb"><tr><th>Fornecedor</th><th>Qtd</th><th>Valor</th></tr>`;forn.forEach(([k,v])=>h+=`<tr><td>${esc(k)}</td><td>${v.qtd}</td><td>${esc(fmtValor(v.valor)||"—")}</td></tr>`);h+=`</table></div>`;}
+  h+=`<div class="rep-sec"><h3>Detalhamento (${doMes.length})</h3>`;
+  if(!doMes.length)h+=`<p class="hint">Nenhuma pauta neste mês.</p>`;
+  else{h+=`<table class="tb"><tr><th>Título</th><th>Frente</th><th>Tipo</th><th>SKU</th><th>Fornecedor</th><th>Qtd</th><th>Valor</th><th>Situação</th></tr>`;doMes.forEach(p=>{h+=`<tr><td>${esc(p.titulo)}</td><td>${(FRENTES[p.frente]||{}).emoji||""}</td><td>${esc(p.tipo||"—")}</td><td>${esc(p.sku||"—")}</td><td>${esc(p.fornecedor_nome||"—")}</td><td>${esc(p.quantidade||"—")}</td><td>${esc(fmtValor(p.valor)||"—")}</td><td>${esc(colNome(p.coluna))}</td></tr>`;});h+=`</table>`;}
+  h+=`</div>`;
+  $("repContent").innerHTML=h;
 }
-
 function exportarCSV(){
-  const ym = document.getElementById("repMonth").value || currentYM();
-  const doMes = pautasDoMes(ym);
-  const cab = ["Titulo","Frente","Tipo","Fornecedor","Quantidade","Valor","Situacao","Prioridade","Origem","Criada em","Concluida em"];
-  const linhas = doMes.map(p=>[
-    p.titulo, FRENTES[p.frente].nome, p.tipo||"", p.fornecedor||"", p.qtd||"",
-    (p.valor!==""&&p.valor!=null)?String(p.valor).replace(".",","):"",
-    colNome(p.coluna).replace(/^\S+\s/,""), p.prioridade||"", p.origem||"", p.criadoEm||"", p.concluidoEm||""
-  ]);
-  const csv = [cab, ...linhas].map(r=> r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\r\n");
-  const blob = new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="relatorio-"+ym+".csv"; a.click();
+  const ym=$("repMonth").value||currentYM();
+  const doMes=pautasDoMes(ym);
+  const cab=["Titulo","Frente","Tipo","SKU","Fornecedor","Quantidade","Valor","Situacao","Prioridade","Origem","Criada em","Concluida em"];
+  const linhas=doMes.map(p=>[p.titulo,(FRENTES[p.frente]||{}).nome||p.frente,p.tipo||"",p.sku||"",p.fornecedor_nome||"",p.quantidade??"",(p.valor!=null&&p.valor!=="")?String(p.valor).replace(".",","):"",colNome(p.coluna).replace(/^\S+\s/,""),p.prioridade||"",p.origem||"",fmtDate(p.criado_em),fmtDate(p.concluido_em)]);
+  const csv=[cab,...linhas].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="relatorio-"+ym+".csv";a.click();
 }
 
-document.getElementById("btnReport").onclick = openReport;
-document.getElementById("repClose").onclick = ()=> repOverlay.classList.remove("show");
-document.getElementById("repCloseBtn").onclick = ()=> repOverlay.classList.remove("show");
-document.getElementById("repMonth").onchange = buildReport;
-document.getElementById("repCsv").onclick = exportarCSV;
-document.getElementById("repPrint").onclick = ()=> window.print();
-repOverlay.addEventListener("click", e=>{ if(e.target===repOverlay) repOverlay.classList.remove("show"); });
-
-/* ---------- seed inicial (exemplos, só na 1ª vez) ---------- */
-if(pautas.length===0){
-  pautas = [
-    {id:"p1_0", titulo:"Repor telas iPhone 12", frente:"manutencao", coluna:"todo", tipo:"Tela", fornecedor:"", qtd:"10", valor:"", prazo:"", prioridade:"normal", origem:"Análise semanal", obs:"", etapas:{}, criadoEm:hoje()},
-    {id:"p2_1", titulo:"Comprar capas linha Galaxy A15", frente:"acessorios", coluna:"doing", tipo:"Capa", fornecedor:"", qtd:"", valor:"", prazo:"", prioridade:"normal", origem:"Lançamento de aparelho", obs:"", etapas:{solicitado:true}, criadoEm:hoje()},
-    {id:"p3_2", titulo:"Lançar escala da equipe", frente:"supervisao", coluna:"todo", tipo:"Escala da equipe", fornecedor:"", qtd:"", valor:"", prazo:"", prioridade:"normal", origem:"", obs:"", etapas:{}, criadoEm:hoje()},
-    {id:"p4_3", titulo:"Manutenção pediu bateria iPhone 11 (urgente)", frente:"demanda", coluna:"inbox", tipo:"Bateria", fornecedor:"", qtd:"", valor:"", prazo:"", prioridade:"urgente", origem:"Surgiu no dia", obs:"", etapas:{}, criadoEm:hoje()},
-  ];
-  save();
-}
+/* ====== EVENTOS ====== */
+$("a_submit").onclick=doAuth;
+$("a_pass").addEventListener("keydown",e=>{if(e.key==="Enter")doAuth();});
+$("a_switch").onclick=()=>setAuthMode(!signupMode);
+$("p_logout").onclick=()=>sb.auth.signOut();
+$("btnLogout").onclick=()=>sb.auth.signOut();
+$("btnNew").onclick=()=>openModal(null);
+$("btnClose").onclick=closeModal;$("btnCancel").onclick=closeModal;$("btnSave").onclick=saveModal;$("btnDelete").onclick=deleteCurrent;
+$("f_frente").onchange=toggleEtapas;
+overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".overlay.show").forEach(o=>o.classList.remove("show"));});
+$("quick").addEventListener("keydown",e=>{if(e.key==="Enter")quickAdd();});
+$("filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filtroFrente=b.dataset.f;document.querySelectorAll("#filters .chip").forEach(c=>c.classList.toggle("active",c===b));render();});
+$("fUrgent").addEventListener("change",e=>{filtroUrgente=e.target.checked;render();});
+$("search").addEventListener("input",e=>{filtroBusca=e.target.value;render();});
+$("btnForn").onclick=openForn;$("fornClose").onclick=$("fornCloseBtn").onclick=()=>$("fornOverlay").classList.remove("show");$("fn_add").onclick=addForn;
+$("btnUsers").onclick=openUsers;$("usersClose").onclick=$("usersCloseBtn").onclick=()=>$("usersOverlay").classList.remove("show");
+$("btnReport").onclick=openReport;$("repClose").onclick=$("repCloseBtn").onclick=()=>$("repOverlay").classList.remove("show");$("repMonth").onchange=buildReport;$("repCsv").onclick=exportarCSV;$("repPrint").onclick=()=>window.print();
+$("fornOverlay").addEventListener("click",e=>{if(e.target===$("fornOverlay"))$("fornOverlay").classList.remove("show");});
+$("usersOverlay").addEventListener("click",e=>{if(e.target===$("usersOverlay"))$("usersOverlay").classList.remove("show");});
+$("repOverlay").addEventListener("click",e=>{if(e.target===$("repOverlay"))$("repOverlay").classList.remove("show");});
 
 fillColunaSelect();
-render();
+setAuthMode(false);
+init();
 </script>
