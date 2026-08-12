@@ -1,0 +1,705 @@
+<meta charset="utf-8">
+<title>Painel de Pautas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#f4f6fb; --panel:#ffffff; --ink:#1f2733; --muted:#6b7688;
+    --line:#e4e8f0; --line2:#eef1f7; --shadow:0 1px 3px rgba(20,30,50,.08),0 1px 2px rgba(20,30,50,.04);
+    --brand:#2f6df6; --brand-ink:#1b52d6;
+    --urgent:#e5484d; --urgent-bg:#fdecec;
+    --done:#12a150;
+    /* frentes */
+    --f-manut:#2f6df6; --f-manut-bg:#e8f0ff;
+    --f-acess:#12a150; --f-acess-bg:#e6f6ec;
+    --f-super:#8b5cf6; --f-super-bg:#f0eafe;
+    --f-dia:#f5820b;   --f-dia-bg:#fdf0e0;
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f141c; --panel:#171e29; --ink:#e8edf5; --muted:#95a1b3;
+      --line:#25303f; --line2:#1e2733; --shadow:0 1px 3px rgba(0,0,0,.4);
+      --f-manut-bg:#16233d; --f-acess-bg:#12291d; --f-super-bg:#241b3a; --f-dia-bg:#2e2413;
+      --urgent-bg:#3a1c1e;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--ink);
+    display:flex; flex-direction:column; height:100vh; overflow:hidden;
+  }
+  button{font-family:inherit; cursor:pointer}
+  input,select,textarea{font-family:inherit}
+
+  /* ---------- HEADER ---------- */
+  header{
+    background:var(--panel); border-bottom:1px solid var(--line);
+    padding:12px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    box-shadow:var(--shadow); z-index:5;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; white-space:nowrap}
+  .brand .logo{
+    width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--brand),#7aa2ff); color:#fff; font-size:18px;
+  }
+  .brand small{display:block; font-weight:500; font-size:11px; color:var(--muted)}
+
+  .quickbar{display:flex; align-items:center; gap:8px; flex:1; min-width:260px}
+  .quickbar input{
+    flex:1; min-width:160px; padding:10px 12px; border:1px solid var(--line);
+    border-radius:9px; background:var(--bg); color:var(--ink); font-size:14px;
+  }
+  .quickbar input:focus{outline:2px solid var(--brand); border-color:transparent}
+
+  .btn{
+    border:1px solid var(--line); background:var(--panel); color:var(--ink);
+    padding:9px 14px; border-radius:9px; font-size:14px; font-weight:600;
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--brand)}
+  .btn.primary{background:var(--brand); color:#fff; border-color:var(--brand)}
+  .btn.primary:hover{background:var(--brand-ink)}
+  .btn.ghost{background:transparent}
+  .btn.sm{padding:6px 10px; font-size:13px}
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding:10px 18px; background:var(--panel); border-bottom:1px solid var(--line);
+  }
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{
+    border:1px solid var(--line); background:var(--panel); color:var(--muted);
+    padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .chip .dot{width:9px;height:9px;border-radius:50%}
+  .chip.active{color:var(--ink); border-color:currentColor}
+  .chip[data-f="todas"].active{border-color:var(--brand); color:var(--brand)}
+  .chip[data-f="manutencao"].active{background:var(--f-manut-bg); border-color:var(--f-manut); color:var(--f-manut)}
+  .chip[data-f="acessorios"].active{background:var(--f-acess-bg); border-color:var(--f-acess); color:var(--f-acess)}
+  .chip[data-f="supervisao"].active{background:var(--f-super-bg); border-color:var(--f-super); color:var(--f-super)}
+  .chip[data-f="demanda"].active{background:var(--f-dia-bg); border-color:var(--f-dia); color:var(--f-dia)}
+
+  .search{margin-left:auto; position:relative}
+  .search input{
+    padding:8px 12px 8px 32px; border:1px solid var(--line); border-radius:9px;
+    background:var(--bg); color:var(--ink); font-size:13px; width:200px;
+  }
+  .search::before{content:"🔍"; position:absolute; left:10px; top:7px; font-size:13px; opacity:.6}
+
+  /* ---------- BOARD ---------- */
+  .board{
+    flex:1; display:flex; gap:14px; padding:16px 18px; overflow-x:auto; overflow-y:hidden;
+  }
+  .col{
+    background:var(--line2); border-radius:var(--radius); width:280px; min-width:280px;
+    display:flex; flex-direction:column; max-height:100%;
+  }
+  .col-head{
+    display:flex; align-items:center; gap:8px; padding:12px 14px 8px; font-weight:700; font-size:14px;
+  }
+  .col-head .count{
+    margin-left:auto; background:var(--panel); color:var(--muted); font-size:12px;
+    padding:2px 9px; border-radius:20px; font-weight:700;
+  }
+  .col-body{padding:4px 10px 12px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:9px}
+  .col-body.drop{background:rgba(47,109,246,.08); outline:2px dashed var(--brand); outline-offset:-4px; border-radius:8px}
+  .col-empty{color:var(--muted); font-size:12px; text-align:center; padding:16px 8px; border:1px dashed var(--line); border-radius:8px}
+
+  /* ---------- CARD ---------- */
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-left-width:4px;
+    border-radius:10px; padding:11px 12px; box-shadow:var(--shadow); cursor:grab;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .card:active{cursor:grabbing}
+  .card.f-manutencao{border-left-color:var(--f-manut)}
+  .card.f-acessorios{border-left-color:var(--f-acess)}
+  .card.f-supervisao{border-left-color:var(--f-super)}
+  .card.f-demanda{border-left-color:var(--f-dia)}
+  .card.urgent{box-shadow:0 0 0 1px var(--urgent), var(--shadow)}
+  .card-title{font-weight:600; font-size:14px; line-height:1.35}
+  .card-meta{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .badge{
+    font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;
+  }
+  .badge.f-manutencao{background:var(--f-manut-bg); color:var(--f-manut)}
+  .badge.f-acessorios{background:var(--f-acess-bg); color:var(--f-acess)}
+  .badge.f-supervisao{background:var(--f-super-bg); color:var(--f-super)}
+  .badge.f-demanda{background:var(--f-dia-bg); color:var(--f-dia)}
+  .badge.urgent{background:var(--urgent-bg); color:var(--urgent)}
+  .badge.soft{background:var(--line2); color:var(--muted)}
+  .card-line{font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px}
+  .prazo.late{color:var(--urgent); font-weight:700}
+  .steps{display:flex; gap:3px; margin-top:2px}
+  .steps .s{flex:1; height:5px; border-radius:3px; background:var(--line)}
+  .steps .s.on{background:var(--done)}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(15,20,28,.5); display:none;
+    align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; z-index:20;
+  }
+  .overlay.show{display:flex}
+  .modal{
+    background:var(--panel); border-radius:16px; width:100%; max-width:560px; box-shadow:0 20px 50px rgba(0,0,0,.3);
+    border:1px solid var(--line);
+  }
+  .modal-head{display:flex; align-items:center; gap:10px; padding:18px 20px; border-bottom:1px solid var(--line)}
+  .modal-head h2{margin:0; font-size:17px}
+  .modal-head .x{margin-left:auto; border:none; background:transparent; font-size:22px; color:var(--muted); line-height:1; padding:4px 8px}
+  .modal-body{padding:18px 20px; display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .field{display:flex; flex-direction:column; gap:5px}
+  .field.full{grid-column:1 / -1}
+  .field label{font-size:12px; font-weight:700; color:var(--muted)}
+  .field input,.field select,.field textarea{
+    padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font-size:14px;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand); border-color:transparent}
+  .field textarea{resize:vertical; min-height:60px}
+  .etapas{grid-column:1/-1; border:1px solid var(--line); border-radius:10px; padding:12px; background:var(--bg)}
+  .etapas h4{margin:0 0 8px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px}
+  .etapas .grid{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+  .etapas label{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; cursor:pointer; padding:4px 0}
+  .etapas input{width:16px;height:16px; accent-color:var(--done)}
+  .modal-foot{display:flex; align-items:center; gap:10px; padding:16px 20px; border-top:1px solid var(--line)}
+  .modal-foot .del{margin-right:auto; color:var(--urgent); border-color:transparent; background:transparent; font-weight:600}
+  .modal-foot .del:hover{background:var(--urgent-bg)}
+
+  .empty-state{margin:auto; text-align:center; color:var(--muted); padding:40px}
+  .empty-state .big{font-size:40px; margin-bottom:8px}
+
+  .hint{font-size:12px;color:var(--muted)}
+
+  /* ---------- RELATÓRIO ---------- */
+  .modal.modal-wide{max-width:820px}
+  .repmonth{margin-left:auto; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font-size:14px}
+  .rep-body{display:block !important}
+  .rep-title{font-size:18px; margin:0 0 14px}
+  .rep-cards{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+  .rep-card{background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+  .rep-card .n{font-size:22px; font-weight:800; line-height:1.1}
+  .rep-card .l{font-size:12px; color:var(--muted); margin-top:3px}
+  .rep-sec{margin-top:20px}
+  .rep-sec h3{font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:0 0 8px}
+  table.rep{width:100%; border-collapse:collapse; font-size:13px}
+  table.rep th, table.rep td{text-align:left; padding:7px 9px; border-bottom:1px solid var(--line)}
+  table.rep th{color:var(--muted); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.3px}
+  @media print{
+    body *{visibility:hidden}
+    #repOverlay, #repOverlay *{visibility:visible}
+    #repOverlay{position:absolute; inset:0; background:#fff; color:#000; display:block; padding:0; overflow:visible}
+    #repOverlay .modal{max-width:100%; box-shadow:none; border:none; border-radius:0}
+    #repOverlay .modal-foot, #repOverlay .modal-head .x, .repmonth{display:none !important}
+    table.rep th, table.rep td{border-color:#ccc}
+  }
+  @media (max-width:600px){ .rep-cards{grid-template-columns:1fr 1fr} }
+  @media (max-width:600px){
+    .modal-body{grid-template-columns:1fr}
+    .etapas .grid{grid-template-columns:1fr}
+    .search{margin-left:0; width:100%}
+    .search input{width:100%}
+  }
+</style>
+
+<header>
+  <div class="brand">
+    <div class="logo">📌</div>
+    <div>Painel de Pautas<small>Compras &amp; Supervisão</small></div>
+  </div>
+  <div class="quickbar">
+    <input id="quick" placeholder="⚡ Captura rápida — digite uma pauta e tecle Enter…" autocomplete="off">
+    <button class="btn primary" id="btnNew">+ Nova pauta</button>
+  </div>
+  <button class="btn ghost sm" id="btnReport" title="Relatório mensal">📊 Relatório</button>
+  <button class="btn ghost sm" id="btnExport" title="Salvar backup dos dados">💾 Backup</button>
+  <button class="btn ghost sm" id="btnImport" title="Restaurar backup">📂 Restaurar</button>
+  <input type="file" id="fileImport" accept="application/json" hidden>
+</header>
+
+<div class="toolbar">
+  <div class="chips" id="filters">
+    <button class="chip active" data-f="todas">Todas</button>
+    <button class="chip" data-f="manutencao"><span class="dot" style="background:var(--f-manut)"></span>🔧 Manutenção</button>
+    <button class="chip" data-f="acessorios"><span class="dot" style="background:var(--f-acess)"></span>📱 Acessórios</button>
+    <button class="chip" data-f="supervisao"><span class="dot" style="background:var(--f-super)"></span>🧑‍💼 Supervisão</button>
+    <button class="chip" data-f="demanda"><span class="dot" style="background:var(--f-dia)"></span>⚡ Demanda do dia</button>
+  </div>
+  <label class="chip" style="cursor:pointer"><input type="checkbox" id="fUrgent" style="accent-color:var(--urgent)"> 🔴 Só urgentes</label>
+  <div class="search"><input id="search" placeholder="Buscar…" autocomplete="off"></div>
+</div>
+
+<div class="board" id="board"></div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nova pauta</h2>
+      <button class="x" id="btnClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field full">
+        <label>Título *</label>
+        <input id="f_titulo" placeholder="Ex: Repor tela iPhone 12">
+      </div>
+      <div class="field">
+        <label>Frente</label>
+        <select id="f_frente">
+          <option value="manutencao">🔧 Manutenção (iPhone/iPad)</option>
+          <option value="acessorios">📱 Acessórios (Android)</option>
+          <option value="supervisao">🧑‍💼 Supervisão</option>
+          <option value="demanda">⚡ Demanda do dia</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Situação (coluna)</label>
+        <select id="f_coluna"></select>
+      </div>
+      <div class="field">
+        <label>Tipo de item</label>
+        <input id="f_tipo" list="tipos" placeholder="tela, bateria, capa…">
+        <datalist id="tipos">
+          <option>Tela</option><option>Bateria</option><option>Tampa traseira</option>
+          <option>Flex</option><option>Capa</option><option>Película</option>
+          <option>Escala da equipe</option><option>Outro</option>
+        </datalist>
+      </div>
+      <div class="field">
+        <label>Fornecedor</label>
+        <input id="f_fornecedor" placeholder="Nome do fornecedor">
+      </div>
+      <div class="field">
+        <label>Quantidade</label>
+        <input id="f_qtd" type="number" min="0" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input id="f_valor" type="number" min="0" step="0.01" placeholder="0,00">
+      </div>
+      <div class="field">
+        <label>Prazo / previsão</label>
+        <input id="f_prazo" type="date">
+      </div>
+      <div class="field">
+        <label>Prioridade</label>
+        <select id="f_prioridade">
+          <option value="normal">Normal</option>
+          <option value="urgente">🔴 Urgente</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Origem</label>
+        <select id="f_origem">
+          <option value="">—</option>
+          <option value="Análise semanal">Análise semanal</option>
+          <option value="Análise quinzenal">Análise quinzenal</option>
+          <option value="Lançamento de aparelho">Lançamento de aparelho</option>
+          <option value="Surgiu no dia">Surgiu no dia</option>
+        </select>
+      </div>
+
+      <div class="etapas" id="etapasBox">
+        <h4>Etapas do processo de compra</h4>
+        <div class="grid">
+          <label><input type="checkbox" data-step="solicitado"> Solicitado ao fornecedor</label>
+          <label><input type="checkbox" data-step="comprado"> Comprado no sistema</label>
+          <label><input type="checkbox" data-step="planilha"> Planilha alimentada</label>
+          <label><input type="checkbox" data-step="nf"> NF solicitada</label>
+          <label><input type="checkbox" data-step="conferencia"> Conferência feita</label>
+          <label><input type="checkbox" data-step="garantia"> Garantia acionada</label>
+        </div>
+      </div>
+
+      <div class="field full">
+        <label>Observações</label>
+        <textarea id="f_obs" placeholder="Detalhes, combinados, links…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn del" id="btnDelete">🗑 Excluir</button>
+      <button class="btn ghost" id="btnCancel">Cancelar</button>
+      <button class="btn primary" id="btnSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RELATÓRIO -->
+<div class="overlay" id="repOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <h2>📊 Relatório</h2>
+      <input type="month" id="repMonth" class="repmonth">
+      <button class="x" id="repClose">&times;</button>
+    </div>
+    <div class="modal-body rep-body" id="repContent"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" id="repCsv">⬇ Exportar CSV (Excel)</button>
+      <button class="btn ghost" id="repPrint">🖨 Imprimir / PDF</button>
+      <button class="btn primary" id="repCloseBtn">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const STORAGE_KEY = "painel_pautas_v1";
+
+const COLUNAS = [
+  {id:"inbox",   nome:"📥 Caixa de Entrada"},
+  {id:"todo",    nome:"📋 A Fazer"},
+  {id:"doing",   nome:"⏳ Em Andamento"},
+  {id:"waiting", nome:"🕓 Aguardando terceiros"},
+  {id:"done",    nome:"✅ Concluída"},
+];
+const FRENTES = {
+  manutencao:{nome:"Manutenção", emoji:"🔧"},
+  acessorios:{nome:"Acessórios", emoji:"📱"},
+  supervisao:{nome:"Supervisão", emoji:"🧑‍💼"},
+  demanda:{nome:"Demanda do dia", emoji:"⚡"},
+};
+const STEPS = ["solicitado","comprado","planilha","nf","conferencia","garantia"];
+
+let pautas = load();
+let filtroFrente = "todas";
+let filtroBusca = "";
+let filtroUrgente = false;
+let editId = null;
+
+/* ---------- persistência ---------- */
+function load(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(pautas)); }
+function markConclusao(p){
+  if(p.coluna==="done"){ if(!p.concluidoEm) p.concluidoEm = hoje(); }
+  else { p.concluidoEm = ""; }
+}
+function uid(){ return "p"+(pautas.reduce((m,p)=>Math.max(m, +String(p.id).slice(1)||0),0)+1)+"_"+(pautas.length); }
+
+/* ---------- util ---------- */
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function hoje(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function fmtDate(iso){ if(!iso) return ""; const [y,m,d]=iso.split("-"); return d+"/"+m+"/"+y.slice(2); }
+function fmtValor(v){ if(v===""||v==null||isNaN(v)) return ""; return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+/* ---------- render ---------- */
+function render(){
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  const termo = filtroBusca.trim().toLowerCase();
+
+  const visiveis = pautas.filter(p=>{
+    if(filtroFrente!=="todas" && p.frente!==filtroFrente) return false;
+    if(filtroUrgente && p.prioridade!=="urgente") return false;
+    if(termo){
+      const blob = (p.titulo+" "+(p.fornecedor||"")+" "+(p.tipo||"")+" "+(p.obs||"")).toLowerCase();
+      if(!blob.includes(termo)) return false;
+    }
+    return true;
+  });
+
+  COLUNAS.forEach(col=>{
+    const itens = visiveis.filter(p=>p.coluna===col.id);
+    const el = document.createElement("div");
+    el.className="col";
+    el.innerHTML = `<div class="col-head">${esc(col.nome)}<span class="count">${itens.length}</span></div>`;
+    const body = document.createElement("div");
+    body.className="col-body"; body.dataset.col=col.id;
+
+    if(itens.length===0){
+      body.innerHTML = `<div class="col-empty">Sem pautas aqui</div>`;
+    }else{
+      itens.forEach(p=> body.appendChild(cardEl(p)) );
+    }
+    // drag & drop na coluna
+    body.addEventListener("dragover", e=>{ e.preventDefault(); body.classList.add("drop"); });
+    body.addEventListener("dragleave", ()=> body.classList.remove("drop"));
+    body.addEventListener("drop", e=>{
+      e.preventDefault(); body.classList.remove("drop");
+      const id = e.dataTransfer.getData("text/plain");
+      const p = pautas.find(x=>x.id===id);
+      if(p && p.coluna!==col.id){ p.coluna=col.id; markConclusao(p); save(); render(); }
+    });
+    el.appendChild(body);
+    board.appendChild(el);
+  });
+}
+
+function cardEl(p){
+  const c = document.createElement("div");
+  c.className = "card f-"+p.frente + (p.prioridade==="urgente"?" urgent":"");
+  c.draggable = true;
+  c.addEventListener("dragstart", e=> e.dataTransfer.setData("text/plain", p.id));
+  c.addEventListener("click", ()=> openModal(p.id));
+
+  const fr = FRENTES[p.frente];
+  let meta = `<span class="badge f-${p.frente}">${fr.emoji} ${esc(fr.nome)}</span>`;
+  if(p.prioridade==="urgente") meta += `<span class="badge urgent">🔴 Urgente</span>`;
+  if(p.tipo) meta += `<span class="badge soft">${esc(p.tipo)}</span>`;
+
+  let linhas = "";
+  if(p.fornecedor) linhas += `<div class="card-line">🏭 ${esc(p.fornecedor)}${p.qtd?` · ${esc(p.qtd)} un`:""}</div>`;
+  else if(p.qtd) linhas += `<div class="card-line">📦 ${esc(p.qtd)} un</div>`;
+  if(p.valor!=="" && p.valor!=null) linhas += `<div class="card-line">💰 ${esc(fmtValor(p.valor))}</div>`;
+  if(p.prazo){
+    const late = p.prazo < hoje() && p.coluna!=="done";
+    linhas += `<div class="card-line prazo ${late?"late":""}">📅 ${esc(fmtDate(p.prazo))}${late?" (vencido)":""}</div>`;
+  }
+
+  // barra de etapas (só compras)
+  let steps = "";
+  if(p.frente==="manutencao" || p.frente==="acessorios"){
+    steps = `<div class="steps" title="Etapas concluídas">`+
+      STEPS.map(s=>`<span class="s ${p.etapas&&p.etapas[s]?"on":""}"></span>`).join("")+`</div>`;
+  }
+
+  c.innerHTML = `<div class="card-title">${esc(p.titulo)}</div>
+    <div class="card-meta">${meta}</div>${linhas}${steps}`;
+  return c;
+}
+
+/* ---------- modal ---------- */
+const overlay = document.getElementById("overlay");
+function fillColunaSelect(){
+  const sel = document.getElementById("f_coluna");
+  sel.innerHTML = COLUNAS.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+}
+function openModal(id){
+  editId = id;
+  const isNew = !id;
+  const p = id ? pautas.find(x=>x.id===id) : {frente:"manutencao", coluna:"inbox", prioridade:"normal", etapas:{}};
+  document.getElementById("modalTitle").textContent = isNew ? "Nova pauta" : "Editar pauta";
+  document.getElementById("btnDelete").style.display = isNew ? "none" : "";
+  document.getElementById("f_titulo").value = p.titulo || "";
+  document.getElementById("f_frente").value = p.frente || "manutencao";
+  document.getElementById("f_coluna").value = p.coluna || "inbox";
+  document.getElementById("f_tipo").value = p.tipo || "";
+  document.getElementById("f_fornecedor").value = p.fornecedor || "";
+  document.getElementById("f_qtd").value = p.qtd ?? "";
+  document.getElementById("f_valor").value = p.valor ?? "";
+  document.getElementById("f_prazo").value = p.prazo || "";
+  document.getElementById("f_prioridade").value = p.prioridade || "normal";
+  document.getElementById("f_origem").value = p.origem || "";
+  document.getElementById("f_obs").value = p.obs || "";
+  STEPS.forEach(s=>{
+    document.querySelector(`[data-step="${s}"]`).checked = !!(p.etapas && p.etapas[s]);
+  });
+  toggleEtapas();
+  overlay.classList.add("show");
+  setTimeout(()=>document.getElementById("f_titulo").focus(),50);
+}
+function closeModal(){ overlay.classList.remove("show"); editId=null; }
+function toggleEtapas(){
+  const fr = document.getElementById("f_frente").value;
+  document.getElementById("etapasBox").style.display = (fr==="manutencao"||fr==="acessorios") ? "" : "none";
+}
+function saveModal(){
+  const titulo = document.getElementById("f_titulo").value.trim();
+  if(!titulo){ alert("Dê um título à pauta."); document.getElementById("f_titulo").focus(); return; }
+  const etapas = {};
+  STEPS.forEach(s=> etapas[s] = document.querySelector(`[data-step="${s}"]`).checked );
+  const dados = {
+    titulo,
+    frente: document.getElementById("f_frente").value,
+    coluna: document.getElementById("f_coluna").value,
+    tipo: document.getElementById("f_tipo").value.trim(),
+    fornecedor: document.getElementById("f_fornecedor").value.trim(),
+    qtd: document.getElementById("f_qtd").value,
+    valor: document.getElementById("f_valor").value,
+    prazo: document.getElementById("f_prazo").value,
+    prioridade: document.getElementById("f_prioridade").value,
+    origem: document.getElementById("f_origem").value,
+    obs: document.getElementById("f_obs").value.trim(),
+    etapas,
+  };
+  let p;
+  if(editId){
+    p = pautas.find(x=>x.id===editId);
+    Object.assign(p, dados);
+  }else{
+    dados.id = uid();
+    dados.criadoEm = hoje();
+    p = dados;
+    pautas.unshift(dados);
+  }
+  markConclusao(p);
+  save(); render(); closeModal();
+}
+function deleteCurrent(){
+  if(!editId) return;
+  if(confirm("Excluir esta pauta?")){
+    pautas = pautas.filter(x=>x.id!==editId);
+    save(); render(); closeModal();
+  }
+}
+
+/* ---------- captura rápida ---------- */
+function quickAdd(){
+  const inp = document.getElementById("quick");
+  const t = inp.value.trim();
+  if(!t) return;
+  pautas.unshift({
+    id:uid(), titulo:t, frente:"demanda", coluna:"inbox",
+    tipo:"", fornecedor:"", qtd:"", valor:"", prazo:"",
+    prioridade:"normal", origem:"Surgiu no dia", obs:"", etapas:{},
+    criadoEm:hoje()
+  });
+  save(); render(); inp.value=""; inp.focus();
+}
+
+/* ---------- backup ---------- */
+function exportar(){
+  const blob = new Blob([JSON.stringify(pautas,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "backup-pautas-"+hoje()+".json";
+  a.click();
+}
+function importar(file){
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    try{
+      const dados = JSON.parse(rd.result);
+      if(!Array.isArray(dados)) throw 0;
+      if(confirm("Isto vai substituir as pautas atuais pelas do backup. Continuar?")){
+        pautas = dados; save(); render();
+      }
+    }catch(e){ alert("Arquivo de backup inválido."); }
+  };
+  rd.readAsText(file);
+}
+
+/* ---------- eventos ---------- */
+document.getElementById("btnNew").onclick = ()=>openModal(null);
+document.getElementById("btnClose").onclick = closeModal;
+document.getElementById("btnCancel").onclick = closeModal;
+document.getElementById("btnSave").onclick = saveModal;
+document.getElementById("btnDelete").onclick = deleteCurrent;
+document.getElementById("f_frente").onchange = toggleEtapas;
+overlay.addEventListener("click", e=>{ if(e.target===overlay) closeModal(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("show")) closeModal(); });
+
+document.getElementById("quick").addEventListener("keydown", e=>{ if(e.key==="Enter") quickAdd(); });
+
+document.getElementById("filters").addEventListener("click", e=>{
+  const b = e.target.closest(".chip"); if(!b) return;
+  filtroFrente = b.dataset.f;
+  document.querySelectorAll("#filters .chip").forEach(c=>c.classList.toggle("active", c===b));
+  render();
+});
+document.getElementById("fUrgent").addEventListener("change", e=>{ filtroUrgente=e.target.checked; render(); });
+document.getElementById("search").addEventListener("input", e=>{ filtroBusca=e.target.value; render(); });
+
+document.getElementById("btnExport").onclick = exportar;
+document.getElementById("btnImport").onclick = ()=>document.getElementById("fileImport").click();
+document.getElementById("fileImport").addEventListener("change", e=>{ if(e.target.files[0]) importar(e.target.files[0]); e.target.value=""; });
+
+/* ---------- relatório mensal ---------- */
+const repOverlay = document.getElementById("repOverlay");
+const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+function ymOf(iso){ return iso ? String(iso).slice(0,7) : ""; }
+function currentYM(){ return hoje().slice(0,7); }
+function monthLabel(ym){ if(!ym) return ""; const [y,m]=ym.split("-"); return MESES[+m-1]+" de "+y; }
+function colNome(id){ const c=COLUNAS.find(x=>x.id===id); return c?c.nome:id; }
+function pautasDoMes(ym){ return pautas.filter(p=> ymOf(p.criadoEm)===ym || ymOf(p.concluidoEm)===ym ); }
+function agrupar(lista, chave){
+  const m={};
+  lista.forEach(p=>{ const k=(p[chave]||"—"); if(!m[k]) m[k]={qtd:0,valor:0}; m[k].qtd++; m[k].valor+=parseFloat(p.valor)||0; });
+  return Object.entries(m).sort((a,b)=>b[1].qtd-a[1].qtd);
+}
+function openReport(){ document.getElementById("repMonth").value=currentYM(); buildReport(); repOverlay.classList.add("show"); }
+
+function buildReport(){
+  const ym = document.getElementById("repMonth").value || currentYM();
+  const criadas = pautas.filter(p=> ymOf(p.criadoEm)===ym);
+  const concluidas = pautas.filter(p=> ymOf(p.concluidoEm)===ym);
+  const doMes = pautasDoMes(ym);
+  const urgentes = criadas.filter(p=> p.prioridade==="urgente").length;
+  const somaValor = criadas.reduce((s,p)=> s+(parseFloat(p.valor)||0),0);
+
+  let html = `<h2 class="rep-title">Relatório de ${esc(monthLabel(ym))}</h2>`;
+  html += `<div class="rep-cards">
+    <div class="rep-card"><div class="n">${criadas.length}</div><div class="l">Pautas criadas</div></div>
+    <div class="rep-card"><div class="n">${concluidas.length}</div><div class="l">Concluídas no mês</div></div>
+    <div class="rep-card"><div class="n">${urgentes}</div><div class="l">Urgentes</div></div>
+    <div class="rep-card"><div class="n">${esc(fmtValor(somaValor)||"R$ 0,00")}</div><div class="l">Valor lançado</div></div>
+  </div>`;
+
+  html += `<div class="rep-sec"><h3>Por frente</h3><table class="rep"><tr><th>Frente</th><th>Criadas</th><th>Concluídas</th><th>Valor</th></tr>`;
+  Object.keys(FRENTES).forEach(f=>{
+    const c = criadas.filter(p=>p.frente===f);
+    const cc = concluidas.filter(p=>p.frente===f).length;
+    if(c.length||cc){
+      const v = c.reduce((s,p)=>s+(parseFloat(p.valor)||0),0);
+      html += `<tr><td>${FRENTES[f].emoji} ${esc(FRENTES[f].nome)}</td><td>${c.length}</td><td>${cc}</td><td>${esc(fmtValor(v)||"—")}</td></tr>`;
+    }
+  });
+  html += `</table></div>`;
+
+  const tipos = agrupar(criadas.filter(p=>p.tipo), "tipo");
+  if(tipos.length){
+    html += `<div class="rep-sec"><h3>Por tipo de item</h3><table class="rep"><tr><th>Tipo</th><th>Qtd</th><th>Valor</th></tr>`;
+    tipos.forEach(([k,v])=> html += `<tr><td>${esc(k)}</td><td>${v.qtd}</td><td>${esc(fmtValor(v.valor)||"—")}</td></tr>`);
+    html += `</table></div>`;
+  }
+  const forn = agrupar(criadas.filter(p=>p.fornecedor), "fornecedor");
+  if(forn.length){
+    html += `<div class="rep-sec"><h3>Por fornecedor</h3><table class="rep"><tr><th>Fornecedor</th><th>Qtd</th><th>Valor</th></tr>`;
+    forn.forEach(([k,v])=> html += `<tr><td>${esc(k)}</td><td>${v.qtd}</td><td>${esc(fmtValor(v.valor)||"—")}</td></tr>`);
+    html += `</table></div>`;
+  }
+
+  html += `<div class="rep-sec"><h3>Detalhamento (${doMes.length})</h3>`;
+  if(doMes.length===0){ html += `<p class="hint">Nenhuma pauta neste mês.</p>`; }
+  else{
+    html += `<table class="rep"><tr><th>Título</th><th>Frente</th><th>Tipo</th><th>Fornecedor</th><th>Qtd</th><th>Valor</th><th>Situação</th></tr>`;
+    doMes.forEach(p=>{
+      html += `<tr><td>${esc(p.titulo)}</td><td>${FRENTES[p.frente].emoji}</td><td>${esc(p.tipo||"—")}</td><td>${esc(p.fornecedor||"—")}</td><td>${esc(p.qtd||"—")}</td><td>${esc(fmtValor(p.valor)||"—")}</td><td>${esc(colNome(p.coluna))}</td></tr>`;
+    });
+    html += `</table>`;
+  }
+  html += `</div>`;
+  document.getElementById("repContent").innerHTML = html;
+}
+
+function exportarCSV(){
+  const ym = document.getElementById("repMonth").value || currentYM();
+  const doMes = pautasDoMes(ym);
+  const cab = ["Titulo","Frente","Tipo","Fornecedor","Quantidade","Valor","Situacao","Prioridade","Origem","Criada em","Concluida em"];
+  const linhas = doMes.map(p=>[
+    p.titulo, FRENTES[p.frente].nome, p.tipo||"", p.fornecedor||"", p.qtd||"",
+    (p.valor!==""&&p.valor!=null)?String(p.valor).replace(".",","):"",
+    colNome(p.coluna).replace(/^\S+\s/,""), p.prioridade||"", p.origem||"", p.criadoEm||"", p.concluidoEm||""
+  ]);
+  const csv = [cab, ...linhas].map(r=> r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const blob = new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="relatorio-"+ym+".csv"; a.click();
+}
+
+document.getElementById("btnReport").onclick = openReport;
+document.getElementById("repClose").onclick = ()=> repOverlay.classList.remove("show");
+document.getElementById("repCloseBtn").onclick = ()=> repOverlay.classList.remove("show");
+document.getElementById("repMonth").onchange = buildReport;
+document.getElementById("repCsv").onclick = exportarCSV;
+document.getElementById("repPrint").onclick = ()=> window.print();
+repOverlay.addEventListener("click", e=>{ if(e.target===repOverlay) repOverlay.classList.remove("show"); });
+
+/* ---------- seed inicial (exemplos, só na 1ª vez) ---------- */
+if(pautas.length===0){
+  pautas = [
+    {id:"p1_0", titulo:"Repor telas iPhone 12", frente:"manutencao", coluna:"todo", tipo:"Tela", fornecedor:"", qtd:"10", valor:"", prazo:"", prioridade:"normal", origem:"Análise semanal", obs:"", etapas:{}, criadoEm:hoje()},
+    {id:"p2_1", titulo:"Comprar capas linha Galaxy A15", frente:"acessorios", coluna:"doing", tipo:"Capa", fornecedor:"", qtd:"", valor:"", prazo:"", prioridade:"normal", origem:"Lançamento de aparelho", obs:"", etapas:{solicitado:true}, criadoEm:hoje()},
+    {id:"p3_2", titulo:"Lançar escala da equipe", frente:"supervisao", coluna:"todo", tipo:"Escala da equipe", fornecedor:"", qtd:"", valor:"", prazo:"", prioridade:"normal", origem:"", obs:"", etapas:{}, criadoEm:hoje()},
+    {id:"p4_3", titulo:"Manutenção pediu bateria iPhone 11 (urgente)", frente:"demanda", coluna:"inbox", tipo:"Bateria", fornecedor:"", qtd:"", valor:"", prazo:"", prioridade:"urgente", origem:"Surgiu no dia", obs:"", etapas:{}, criadoEm:hoje()},
+  ];
+  save();
+}
+
+fillColunaSelect();
+render();
+</script>
