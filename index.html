@@ -1,4 +1,4 @@
- <meta charset="utf-8">
+<meta charset="utf-8">
 <title>Painel de Pautas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -351,13 +351,12 @@ function hide(el){el.classList.add("hidden");}
 async function init(){
   const {data:{session}} = await sb.auth.getSession();
   await handleSession(session);
-  sb.auth.onAuthStateChange((_e,s)=>handleSession(s));
+  // defere pra fora do "lock" do callback — evita que a leitura do perfil rode sem o token
+  sb.auth.onAuthStateChange((_e,s)=>{ setTimeout(()=>handleSession(s),0); });
 }
 async function handleSession(session){
   if(!session){ hide($("appView"));hide($("pendingView"));show($("authView")); return; }
   me = await loadProfile(session.user.id);
-  // o perfil é criado por gatilho; se ainda não veio, tenta de novo
-  if(!me){ await new Promise(r=>setTimeout(r,800)); me=await loadProfile(session.user.id); }
   if(!me){ hide($("appView"));show($("pendingView"));hide($("authView")); return; }
   if(!me.aprovado){ hide($("appView"));show($("pendingView"));hide($("authView")); return; }
   hide($("authView"));hide($("pendingView"));show($("appView"));
@@ -367,8 +366,14 @@ async function handleSession(session){
   subscribe();
 }
 async function loadProfile(id){
-  const {data} = await sb.from("profiles").select("*").eq("id",id).maybeSingle();
-  return data;
+  // tenta algumas vezes: logo após o login o token pode levar um instante pra ficar pronto
+  for(let i=0;i<6;i++){
+    const {data,error} = await sb.from("profiles").select("*").eq("id",id).maybeSingle();
+    if(data) return data;
+    if(error) console.warn("perfil:", error.message);
+    await new Promise(r=>setTimeout(r,400));
+  }
+  return null;
 }
 function paintUser(){
   $("uName").textContent = me.nome||me.email;
